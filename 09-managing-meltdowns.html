@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Managing Meltdowns – A Parent's Guide</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #FDF6EE;
+      --orange: #E8875A;
+      --orange-light: #FFF0E8;
+      --teal: #5BB8AC;
+      --teal-light: #EAF7F5;
+      --yellow: #F5CE5A;
+      --yellow-light: #FFFBEA;
+      --red: #E85A6A;
+      --red-light: #FFF0F2;
+      --green: #6BBF7B;
+      --green-light: #EDF7F0;
+      --text: #3D3440;
+      --subtext: #7A6E7F;
+      --card: #FFFFFF;
+    }
+
+    body {
+      font-family: 'Nunito', system-ui, sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* HEADER */
+    .hero {
+      background: linear-gradient(135deg, #E8875A 0%, #E85A6A 100%);
+      color: white;
+      padding: 48px 24px 40px;
+      text-align: center;
+    }
+    .hero-icon { font-size: 48px; margin-bottom: 12px; }
+    .hero h1 { font-size: clamp(28px, 5vw, 42px); font-weight: 900; margin-bottom: 10px; }
+    .hero p { font-size: 17px; opacity: 0.92; max-width: 600px; margin: 0 auto; }
+
+    /* PRINCIPLES STRIP */
+    .principles {
+      background: var(--yellow-light);
+      border-top: 3px solid var(--yellow);
+      border-bottom: 3px solid var(--yellow);
+      padding: 28px 24px;
+    }
+    .principles h2 {
+      text-align: center;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+    .principles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .principle-card {
+      background: white;
+      border-radius: 14px;
+      padding: 16px 18px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      border-left: 4px solid var(--yellow);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .principle-icon { font-size: 26px; flex-shrink: 0; margin-top: 2px; }
+    .principle-card p { font-size: 14.5px; font-weight: 600; color: var(--text); }
+
+    /* PHASE TABS */
+    .phases-container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
+    .phases-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .phase-tab {
+      flex: 1;
+      min-width: 140px;
+      padding: 14px 20px;
+      border: none;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s;
+      opacity: 0.55;
+      position: relative;
+    }
+    .phase-tab.active { opacity: 1; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+    .phase-tab.before { background: var(--yellow); color: #5A4500; }
+    .phase-tab.during { background: var(--red); color: white; }
+    .phase-tab.after  { background: var(--green); color: white; }
+    .phase-tab .tab-label { display: block; font-size: 12px; font-weight: 600; opacity: 0.75; margin-bottom: 2px; }
+    .phase-tab .tab-title { display: block; font-size: 17px; }
+
+    .phase-panel { display: none; animation: fadeIn 0.3s ease; }
+    .phase-panel.active { display: block; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .phase-header {
+      border-radius: 16px 16px 0 0;
+      padding: 20px 24px;
+      margin-bottom: 0;
+    }
+    .phase-header.before { background: var(--yellow); }
+    .phase-header.during { background: var(--red); color: white; }
+    .phase-header.after  { background: var(--green); color: white; }
+    .phase-header h3 { font-size: 22px; font-weight: 900; }
+    .phase-header p { font-size: 14px; opacity: 0.85; margin-top: 4px; }
+    .before .phase-header h3 { color: #5A4500; }
+    .before .phase-header p { color: #7A6500; }
+
+    .tips-grid {
+      background: white;
+      border-radius: 0 0 16px 16px;
+      padding: 24px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 14px;
+    }
+
+    .tip-card {
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .tip-card.yellow-tip { background: var(--yellow-light); border-left: 4px solid var(--yellow); }
+    .tip-card.red-tip    { background: var(--red-light);    border-left: 4px solid var(--red); }
+    .tip-card.green-tip  { background: var(--green-light);  border-left: 4px solid var(--green); }
+    .tip-card.teal-tip   { background: var(--teal-light);   border-left: 4px solid var(--teal); }
+
+    .tip-icon { font-size: 24px; flex-shrink: 0; margin-top: 2px; }
+    .tip-content { flex: 1; }
+    .tip-content strong { display: block; font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+    .tip-content p { font-size: 13.5px; color: var(--subtext); }
+
+    .dont-banner {
+      background: #FFF0F2;
+      border: 2px dashed var(--red);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin: 16px 0;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .dont-banner .dont-icon { font-size: 28px; flex-shrink: 0; }
+    .dont-banner h4 { font-size: 15px; font-weight: 800; color: var(--red); margin-bottom: 6px; }
+    .dont-banner ul { padding-left: 16px; }
+    .dont-banner li { font-size: 13.5px; color: var(--text); margin-bottom: 3px; }
+
+    /* HOME STRATEGIES */
+    .strategies-section {
+      background: white;
+      border-top: 4px solid var(--teal);
+    }
+    .strategies-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    .strategies-inner h2 {
+      font-size: 26px;
+      font-weight: 900;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    .strategies-inner .subtitle {
+      text-align: center;
+      color: var(--subtext);
+      font-size: 15px;
+      margin-bottom: 32px;
+    }
+    .strategy-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+    }
+    .strategy-card {
+      background: var(--teal-light);
+      border-radius: 14px;
+      padding: 20px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      border: 2px solid transparent;
+    }
+    .strategy-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(91,184,172,0.2);
+      border-color: var(--teal);
+    }
+    .strategy-card .card-icon { font-size: 32px; margin-bottom: 10px; }
+    .strategy-card h4 { font-size: 15px; font-weight: 800; margin-bottom: 6px; color: var(--text); }
+    .strategy-card .example {
+      font-size: 13px;
+      color: var(--subtext);
+      font-style: italic;
+      background: white;
+      border-radius: 8px;
+      padding: 8px 10px;
+      margin-top: 8px;
+      display: none;
+    }
+    .strategy-card.open .example { display: block; }
+    .strategy-card .expand-hint {
+      font-size: 12px;
+      color: var(--teal);
+      font-weight: 700;
+      margin-top: 8px;
+    }
+    .strategy-card.open .expand-hint::after { content: " ▲"; }
+    .strategy-card:not(.open) .expand-hint::after { content: " ▼"; }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 13px;
+      color: var(--subtext);
+      background: var(--cream);
+    }
+  </style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-icon">🌊</div>
+  <h1>Managing Meltdowns</h1>
+  <p>A calm, practical guide for parents and carers — before, during and after</p>
+</div>
+
+<!-- REMEMBER FIRST -->
+<div class="principles">
+  <h2>💛 First Things to Remember</h2>
+  <div class="principles-grid">
+    <div class="principle-card">
+      <div class="principle-icon">🚨</div>
+      <p>A meltdown is best understood as a <strong>panic attack</strong> — not a choice, not a battle to win.</p>
+    </div>
+    <div class="principle-card">
+      <div class="principle-icon">🧠</div>
+      <p>During a meltdown, the child <strong>cannot learn</strong>. Traditional discipline won't work here.</p>
+    </div>
+    <div class="principle-card">
+      <div class="principle-icon">❤️</div>
+      <p>You are your child's <strong>emotional brakes</strong>. How you respond makes a real difference.</p>
+    </div>
+    <div class="principle-card">
+      <div class="principle-icon">🔁</div>
+      <p>Separate your <strong>relationship</strong> with your child from the behaviour you're seeing.</p>
+    </div>
+    <div class="principle-card">
+      <div class="principle-icon">🛡️</div>
+      <p>Emergency rule: <strong>Don't hurt yourself, others, or damage property.</strong> Safety first, always.</p>
+    </div>
+    <div class="principle-card">
+      <div class="principle-icon">💬</div>
+      <p>It's <strong>"can't" not "won't"</strong> — they are genuinely unable to control this in the moment.</p>
+    </div>
+  </div>
+</div>
+
+<!-- PHASES -->
+<div class="phases-container">
+  <div class="phases-tabs">
+    <button class="phase-tab before active" onclick="showPhase('before', this)">
+      <span class="tab-label">PHASE 1</span>
+      <span class="tab-title">⚠️ Before</span>
+    </button>
+    <button class="phase-tab during" onclick="showPhase('during', this)">
+      <span class="tab-label">PHASE 2</span>
+      <span class="tab-title">🔥 During</span>
+    </button>
+    <button class="phase-tab after" onclick="showPhase('after', this)">
+      <span class="tab-label">PHASE 3</span>
+      <span class="tab-title">🌱 After</span>
+    </button>
+  </div>
+
+  <!-- BEFORE -->
+  <div class="phase-panel before active" id="panel-before">
+    <div class="phase-header before">
+      <h3>⚠️ Prevention — Spotting the Signs Early</h3>
+      <p>Prevention is far better than cure. Watch for rising anxiety before things escalate.</p>
+    </div>
+    <div class="tips-grid">
+      <div class="tip-card yellow-tip">
+        <div class="tip-icon">👀</div>
+        <div class="tip-content">
+          <strong>Watch for triggers</strong>
+          <p>Be aware of the situations, places, sounds or events that have caused meltdowns before.</p>
+        </div>
+      </div>
+      <div class="tip-card yellow-tip">
+        <div class="tip-icon">📈</div>
+        <div class="tip-content">
+          <strong>Spot rising anxiety</strong>
+          <p>Look for changes in body language, increased stimming, quietness, or repetitive questions — these can be early signals.</p>
+        </div>
+      </div>
+      <div class="tip-card yellow-tip">
+        <div class="tip-icon">📅</div>
+        <div class="tip-content">
+          <strong>Plan for tricky situations</strong>
+          <p>If you know a noisy event or change of routine is coming, prepare your child in advance with clear, gentle information.</p>
+        </div>
+      </div>
+      <div class="tip-card yellow-tip">
+        <div class="tip-icon">🌡️</div>
+        <div class="tip-content">
+          <strong>Track good days and hard days</strong>
+          <p>Anxiety levels vary daily. On harder days, reduce demands and expectations to lower the pressure.</p>
+        </div>
+      </div>
+      <div class="tip-card yellow-tip">
+        <div class="tip-icon">🏠</div>
+        <div class="tip-content">
+          <strong>Have a safe place ready</strong>
+          <p>Know in advance where your child can go to decompress — a bedroom, a quiet corner, a den — before things escalate.</p>
+        </div>
+      </div>
+      <div class="tip-card yellow-tip">
+        <div class="tip-icon">🧩</div>
+        <div class="tip-content">
+          <strong>Build a toolkit</strong>
+          <p>Know what helps your child calm — headphones, weighted blankets, a favourite item. Have these accessible.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DURING -->
+  <div class="phase-panel during" id="panel-during">
+    <div class="phase-header during">
+      <h3>🔥 During a Meltdown — In the Moment</h3>
+      <p>Your calmness is the most powerful tool you have right now.</p>
+    </div>
+    <div class="tips-grid">
+      <div class="tip-card red-tip">
+        <div class="tip-icon">😌</div>
+        <div class="tip-content">
+          <strong>Stay calm and neutral</strong>
+          <p>Keep your voice level, face neutral and body language open. Shouting or showing frustration will escalate things.</p>
+        </div>
+      </div>
+      <div class="tip-card red-tip">
+        <div class="tip-icon">📉</div>
+        <div class="tip-content">
+          <strong>Reduce stimulation</strong>
+          <p>Turn down the TV, ask others to be quiet, reduce noise and visual busyness where possible.</p>
+        </div>
+      </div>
+      <div class="tip-card red-tip">
+        <div class="tip-icon">🤫</div>
+        <div class="tip-content">
+          <strong>Keep communication minimal</strong>
+          <p>Short, simple instructions only. Now is not the time for explanation, reasoning or negotiation.</p>
+        </div>
+      </div>
+      <div class="tip-card red-tip">
+        <div class="tip-icon">↔️</div>
+        <div class="tip-content">
+          <strong>Give space</strong>
+          <p>Step back rather than forward. Give physical and emotional space — don't crowd or corner them.</p>
+        </div>
+      </div>
+      <div class="tip-card red-tip">
+        <div class="tip-icon">🚪</div>
+        <div class="tip-content">
+          <strong>Encourage exit to safety</strong>
+          <p>Guide your child to their safe space — bedroom, garden, quiet corner. Guide rather than force if possible.</p>
+        </div>
+      </div>
+      <div class="tip-card red-tip">
+        <div class="tip-icon">✅</div>
+        <div class="tip-content">
+          <strong>Steer positively</strong>
+          <p>Rather than "stop running around", try "you might feel calmer if you stand still" — suggest, don't command.</p>
+        </div>
+      </div>
+      <div class="tip-card red-tip">
+        <div class="tip-icon">🏃</div>
+        <div class="tip-content">
+          <strong>If they run</strong>
+          <p>If safe to do so, following at a distance is better than chasing — chasing can increase panic.</p>
+        </div>
+      </div>
+      <div class="tip-card red-tip">
+        <div class="tip-icon">🤗</div>
+        <div class="tip-content">
+          <strong>When calming begins</strong>
+          <p>Once the peak passes, offer verbal reassurance. Younger children may welcome "would you like a hug until you feel better?"</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding: 0 24px 24px; background: white; border-radius: 0 0 16px 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
+      <div class="dont-banner">
+        <div class="dont-icon">🚫</div>
+        <div>
+          <h4>Things to avoid during a meltdown</h4>
+          <ul>
+            <li>Don't threaten punishments — the child cannot respond to these right now</li>
+            <li>Don't offer rewards — same reason, they're beyond reasoning in this state</li>
+            <li>Don't raise your voice — it adds to the sensory overwhelm</li>
+            <li>Don't force physical contact — touch can feel painful when overwhelmed</li>
+            <li>Don't involve other people unnecessarily — an audience makes things worse</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AFTER -->
+  <div class="phase-panel after" id="panel-after">
+    <div class="phase-header after">
+      <h3>🌱 After a Meltdown — Recovery</h3>
+      <p>Recovery time is real. Don't rush past this phase.</p>
+    </div>
+    <div class="tips-grid">
+      <div class="tip-card green-tip">
+        <div class="tip-icon">⏳</div>
+        <div class="tip-content">
+          <strong>Allow recovery time</strong>
+          <p>Children need time to recompose after a meltdown. Their safe place is a good spot for this.</p>
+        </div>
+      </div>
+      <div class="tip-card green-tip">
+        <div class="tip-icon">🍎</div>
+        <div class="tip-content">
+          <strong>Offer a snack or drink</strong>
+          <p>A small snack or drink can genuinely help a child calm down and recover physically.</p>
+        </div>
+      </div>
+      <div class="tip-card green-tip">
+        <div class="tip-icon">💛</div>
+        <div class="tip-content">
+          <strong>Reassure them</strong>
+          <p>They may need to hear that it's over, and that you still love and like them. "I know you couldn't help that" goes a long way.</p>
+        </div>
+      </div>
+      <div class="tip-card green-tip">
+        <div class="tip-icon">🔄</div>
+        <div class="tip-content">
+          <strong>Fresh start</strong>
+          <p>Try to move forward without dwelling on the incident. Starting fresh helps both of you.</p>
+        </div>
+      </div>
+      <div class="tip-card green-tip">
+        <div class="tip-icon">💬</div>
+        <div class="tip-content">
+          <strong>Consider a debrief — carefully</strong>
+          <p>Some children find it helpful to talk about what happened later. But be cautious — for many, this can trigger another meltdown. Know your child.</p>
+        </div>
+      </div>
+      <div class="tip-card green-tip">
+        <div class="tip-icon">📓</div>
+        <div class="tip-content">
+          <strong>Note any patterns</strong>
+          <p>Reflecting on what triggered this — quietly, for yourself — can help you prevent or manage the next one better.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HOME STRATEGIES -->
+<div class="strategies-section">
+  <div class="strategies-inner">
+    <h2>🏠 Home Strategies</h2>
+    <p class="subtitle">Tap any card to see an example — these are especially helpful for children with PDA (Pathological Demand Avoidance)</p>
+    <div class="strategy-grid">
+      <div class="strategy-card" onclick="toggleCard(this)">
+        <div class="card-icon">⚖️</div>
+        <h4>Choose Your Battles</h4>
+        <p style="font-size:13.5px;color:var(--subtext)">Ask: is this worth a massive meltdown? Flexibility at home matters.</p>
+        <div class="example">Save firm boundaries for what genuinely matters — safety, harm. Let smaller things go when anxiety is high.</div>
+        <div class="expand-hint">Tap for example</div>
+      </div>
+      <div class="strategy-card" onclick="toggleCard(this)">
+        <div class="card-icon">📊</div>
+        <h4>Balance Tolerance &amp; Demands</h4>
+        <p style="font-size:13.5px;color:var(--subtext)">Match expectations to the day — not every day is the same.</p>
+        <div class="example">On hard days, reduce demands. On easier days, gently increase them. Go with the flow of their anxiety levels.</div>
+        <div class="expand-hint">Tap for example</div>
+      </div>
+      <div class="strategy-card" onclick="toggleCard(this)">
+        <div class="card-icon">🎯</div>
+        <h4>Indirect Praise</h4>
+        <p style="font-size:13.5px;color:var(--subtext)">Direct praise can feel overwhelming — try a gentler approach.</p>
+        <div class="example">"I was just telling Grandma how brilliantly you helped me earlier" (said while they're in earshot) — much easier to accept.</div>
+        <div class="expand-hint">Tap for example</div>
+      </div>
+      <div class="strategy-card" onclick="toggleCard(this)">
+        <div class="card-icon">🎮</div>
+        <h4>Indirect Commands</h4>
+        <p style="font-size:13.5px;color:var(--subtext)">Turn demands into challenges or invitations.</p>
+        <div class="example">"Bet I can get my coat on before you!" or "Can you show me how you do that?" works far better than "Put your coat on."</div>
+        <div class="expand-hint">Tap for example</div>
+      </div>
+      <div class="strategy-card" onclick="toggleCard(this)">
+        <div class="card-icon">🤷</div>
+        <h4>Pretend You Don't Know</h4>
+        <p style="font-size:13.5px;color:var(--subtext)">Getting it wrong on purpose gives them control.</p>
+        <div class="example">Misread a word in a book, or ask "Could you show me how you do this?" for something you want them to do independently.</div>
+        <div class="expand-hint">Tap for example</div>
+      </div>
+      <div class="strategy-card" onclick="toggleCard(this)">
+        <div class="card-icon">🔀</div>
+        <h4>Offer Limited Choices</h4>
+        <p style="font-size:13.5px;color:var(--subtext)">Give some control without losing the outcome you need.</p>
+        <div class="example">"Do you want to start your homework at 3pm or 4pm?" — either way, it gets done; they feel in control.</div>
+        <div class="expand-hint">Tap for example</div>
+      </div>
+      <div class="strategy-card" onclick="toggleCard(this)">
+        <div class="card-icon">⏩</div>
+        <h4>When… Then</h4>
+        <p style="font-size:13.5px;color:var(--subtext)">A simple, positive structure for expectations.</p>
+        <div class="example">"When you've done your homework, then you can play Xbox." Keep it calm and consistent — not a threat, just information.</div>
+        <div class="expand-hint">Tap for example</div>
+      </div>
+      <div class="strategy-card" onclick="toggleCard(this)">
+        <div class="card-icon">🌅</div>
+        <h4>Fresh Start Every Day</h4>
+        <p style="font-size:13.5px;color:var(--subtext)">Don't let yesterday follow you into today.</p>
+        <div class="example">Whatever happened yesterday, start fresh. Carrying it over adds to anxiety levels and makes a meltdown more likely today.</div>
+        <div class="expand-hint">Tap for example</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  Based on content from the ASD Support Pack &nbsp;•&nbsp; Source: National Autistic Society, Autism Education Trust &amp; The Cygnet Parenting Programme &nbsp;•&nbsp; NHS Mid Cheshire Hospitals Foundation Trust (July 2020)
+</footer>
+
+<script>
+  function showPhase(phase, btn) {
+    document.querySelectorAll('.phase-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.phase-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('panel-' + phase).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  function toggleCard(card) {
+    card.classList.toggle('open');
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Understanding &amp; Managing Behaviour – ASD Guide</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #FDF6EE;
+      --orange: #E8875A;
+      --orange-light: #FFF0E8;
+      --teal: #5BB8AC;
+      --teal-light: #EAF7F5;
+      --yellow: #F5CE5A;
+      --yellow-light: #FFFBEA;
+      --purple: #9B7EBD;
+      --purple-light: #F4EEFB;
+      --coral: #E87A7A;
+      --blue: #6BA3D6;
+      --blue-light: #EFF5FC;
+      --green: #6BBF7B;
+      --green-light: #EDF7F0;
+      --text: #3D3440;
+      --subtext: #7A6E7F;
+      --card: #FFFFFF;
+    }
+
+    body {
+      font-family: 'Nunito', system-ui, sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* HERO */
+    .hero {
+      background: linear-gradient(135deg, #9B7EBD 0%, #6BA3D6 100%);
+      color: white;
+      padding: 48px 24px 40px;
+      text-align: center;
+    }
+    .hero-icon { font-size: 52px; margin-bottom: 12px; }
+    .hero h1 { font-size: clamp(26px, 5vw, 40px); font-weight: 900; margin-bottom: 10px; }
+    .hero p { font-size: 16.5px; opacity: 0.92; max-width: 640px; margin: 0 auto; }
+
+    section { max-width: 1000px; margin: 0 auto; padding: 44px 20px 0; }
+    section h2 {
+      font-size: clamp(20px, 3vw, 26px);
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+    section .section-intro {
+      font-size: 15px;
+      color: var(--subtext);
+      margin-bottom: 28px;
+      max-width: 700px;
+    }
+
+    /* ROOTS OF BEHAVIOUR */
+    .roots-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .root-card {
+      border-radius: 18px;
+      padding: 24px 20px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .root-card:hover { transform: translateY(-4px); box-shadow: 0 10px 30px rgba(0,0,0,0.12); }
+    .root-card.comm    { background: linear-gradient(135deg, #9B7EBD, #7A5CAA); color: white; }
+    .root-card.social  { background: linear-gradient(135deg, #6BA3D6, #4A80B8); color: white; }
+    .root-card.repeat  { background: linear-gradient(135deg, #E8875A, #C86035); color: white; }
+    .root-card.sensory { background: linear-gradient(135deg, #5BB8AC, #3A9590); color: white; }
+    .root-card .rc-icon { font-size: 42px; margin-bottom: 12px; display: block; }
+    .root-card h3 { font-size: 18px; font-weight: 900; margin-bottom: 8px; }
+    .root-card .root-detail {
+      font-size: 13.5px;
+      opacity: 0;
+      max-height: 0;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      text-align: left;
+      background: rgba(255,255,255,0.15);
+      border-radius: 10px;
+      padding: 0;
+    }
+    .root-card.open .root-detail {
+      opacity: 1;
+      max-height: 300px;
+      padding: 12px;
+      margin-top: 10px;
+    }
+    .root-card .tap-hint { font-size: 11px; opacity: 0.75; margin-top: 8px; font-weight: 700; }
+    .root-card ul { padding-left: 14px; }
+    .root-card li { margin-bottom: 4px; }
+
+    /* ICEBERG */
+    .iceberg-section {
+      background: var(--blue-light);
+      border-radius: 20px;
+      padding: 32px;
+      margin-top: 40px;
+    }
+    .iceberg-title { font-size: 22px; font-weight: 900; margin-bottom: 6px; }
+    .iceberg-sub { font-size: 14px; color: var(--subtext); margin-bottom: 24px; }
+    .iceberg-visual {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+    .ice-above {
+      background: white;
+      border: 3px solid var(--blue);
+      border-radius: 16px 16px 0 0;
+      padding: 20px 32px;
+      width: 100%;
+      max-width: 600px;
+      text-align: center;
+      position: relative;
+    }
+    .ice-above::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--blue);
+    }
+    .ice-above h4 { font-size: 14px; font-weight: 800; color: var(--blue); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+    .ice-behaviours {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+    .beh-chip {
+      background: #E85A6A;
+      color: white;
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .waterline {
+      background: linear-gradient(90deg, transparent, var(--blue), transparent);
+      height: 4px;
+      width: 100%;
+      max-width: 600px;
+      opacity: 0.5;
+      margin: 0;
+    }
+    .ice-below {
+      background: linear-gradient(180deg, #C8DFEF, #A0C8E0);
+      border: 3px solid var(--blue);
+      border-top: none;
+      border-radius: 0 0 40px 40px;
+      padding: 24px 32px;
+      width: 100%;
+      max-width: 600px;
+      clip-path: polygon(0 0, 100% 0, 90% 100%, 10% 100%);
+    }
+    .ice-below h4 { font-size: 14px; font-weight: 800; color: #1A5580; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+    .causes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px;
+    }
+    .cause-item {
+      background: rgba(255,255,255,0.5);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #1A5580;
+      text-align: center;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .cause-item:hover { background: rgba(255,255,255,0.8); }
+    .waterline-label {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--blue);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      padding: 6px 16px;
+      background: white;
+      border-radius: 20px;
+      margin: 4px 0;
+      border: 2px solid var(--blue);
+    }
+
+    /* STAR ANALYSIS */
+    .star-section { padding-top: 44px; }
+    .star-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 16px;
+    }
+    .star-card {
+      border-radius: 18px;
+      padding: 22px 20px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .star-card:hover { transform: translateY(-3px); }
+    .star-card.settings { background: var(--yellow-light); border: 2px solid var(--yellow); }
+    .star-card.triggers { background: var(--orange-light); border: 2px solid var(--orange); }
+    .star-card.actions  { background: var(--purple-light); border: 2px solid var(--purple); }
+    .star-card.results  { background: var(--green-light); border: 2px solid var(--green); }
+    .star-letter {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: 900;
+      color: white;
+      margin-bottom: 12px;
+    }
+    .settings .star-letter { background: var(--yellow); color: #5A4500; }
+    .triggers .star-letter { background: var(--orange); }
+    .actions .star-letter  { background: var(--purple); }
+    .results .star-letter  { background: var(--green); }
+    .star-card h3 { font-size: 17px; font-weight: 900; margin-bottom: 6px; }
+    .star-card .star-summary { font-size: 13.5px; color: var(--subtext); }
+    .star-card .star-detail {
+      font-size: 13px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 2px dashed rgba(0,0,0,0.1);
+      display: none;
+      color: var(--text);
+    }
+    .star-card.open .star-detail { display: block; }
+    .star-card .star-hint { font-size: 12px; margin-top: 10px; font-weight: 700; color: var(--subtext); }
+
+    /* STRATEGY TOOLKIT */
+    .toolkit-section {
+      background: white;
+      margin-top: 48px;
+      border-top: 4px solid var(--orange);
+      padding-bottom: 0;
+    }
+    .toolkit-inner { max-width: 1000px; margin: 0 auto; padding: 44px 20px; }
+    .toolkit-inner h2 { font-size: 26px; font-weight: 900; margin-bottom: 8px; }
+    .toolkit-inner .section-intro { font-size: 15px; color: var(--subtext); margin-bottom: 32px; }
+
+    .strategy-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+    .strat-tab {
+      padding: 10px 18px;
+      border: 2px solid #E0D8E8;
+      border-radius: 12px;
+      background: white;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--subtext);
+      transition: all 0.2s;
+    }
+    .strat-tab.active {
+      background: var(--purple);
+      border-color: var(--purple);
+      color: white;
+    }
+
+    .strat-panel { display: none; animation: fadeIn 0.25s ease; }
+    .strat-panel.active { display: block; }
+
+    .tips-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 14px;
+    }
+    .tip2 {
+      border-radius: 14px;
+      padding: 16px 18px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .tip2.purple { background: var(--purple-light); border-left: 4px solid var(--purple); }
+    .tip2.blue   { background: var(--blue-light); border-left: 4px solid var(--blue); }
+    .tip2.orange { background: var(--orange-light); border-left: 4px solid var(--orange); }
+    .tip2.green  { background: var(--green-light); border-left: 4px solid var(--green); }
+    .tip2.teal   { background: var(--teal-light); border-left: 4px solid var(--teal); }
+    .tip2 .t2-icon { font-size: 26px; flex-shrink: 0; margin-top: 2px; }
+    .tip2 strong { display: block; font-size: 14px; font-weight: 800; margin-bottom: 4px; }
+    .tip2 p { font-size: 13.5px; color: var(--subtext); }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 13px;
+      color: var(--subtext);
+      background: var(--cream);
+      margin-top: 0;
+    }
+  </style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-icon">🔍</div>
+  <h1>Understanding &amp; Managing Behaviour</h1>
+  <p>Why do children with ASD display certain behaviours — and what can you do? Explore the roots of behaviour and discover practical strategies to help.</p>
+</div>
+
+<!-- ROOTS OF BEHAVIOUR -->
+<section>
+  <h2>🌱 The Roots of Behaviour</h2>
+  <p class="section-intro">Every behaviour has a reason. For children with ASD, difficult behaviour usually traces back to one or more of these four areas. Tap each one to learn more.</p>
+  <div class="roots-grid">
+    <div class="root-card comm" onclick="toggleRoot(this)">
+      <span class="rc-icon">💬</span>
+      <h3>Communication</h3>
+      <p style="font-size:14px;opacity:0.9;">Difficulty expressing needs or understanding others</p>
+      <div class="root-detail">
+        <ul>
+          <li>May struggle to use language to communicate needs</li>
+          <li>Can speak very loudly or find non-verbal cues hard</li>
+          <li>May understand things very literally</li>
+          <li>Difficult behaviour is often the only way they can get a need met when words fail</li>
+        </ul>
+      </div>
+      <div class="tap-hint">Tap to expand</div>
+    </div>
+    <div class="root-card social" onclick="toggleRoot(this)">
+      <span class="rc-icon">👥</span>
+      <h3>Social Interaction</h3>
+      <p style="font-size:14px;opacity:0.9;">Challenges with two-way social engagement</p>
+      <div class="root-detail">
+        <ul>
+          <li>May avoid social contact or be unaware of social rules</li>
+          <li>Can become anxious and distressed in social situations</li>
+          <li>May not understand personal space or turn-taking</li>
+          <li>Anxiety from social demands can trigger difficult behaviours</li>
+        </ul>
+      </div>
+      <div class="tap-hint">Tap to expand</div>
+    </div>
+    <div class="root-card repeat" onclick="toggleRoot(this)">
+      <span class="rc-icon">🔁</span>
+      <h3>Routine &amp; Repetition</h3>
+      <p style="font-size:14px;opacity:0.9;">Need for predictability and sameness</p>
+      <div class="root-detail">
+        <ul>
+          <li>Often prefers routine and struggles with unexpected changes</li>
+          <li>May focus intensely on small details rather than the bigger picture</li>
+          <li>May struggle to see things from another's perspective</li>
+          <li>A change to the usual routine is a very common trigger for difficult behaviour</li>
+        </ul>
+      </div>
+      <div class="tap-hint">Tap to expand</div>
+    </div>
+    <div class="root-card sensory" onclick="toggleRoot(this)">
+      <span class="rc-icon">🌡️</span>
+      <h3>Sensory Processing</h3>
+      <p style="font-size:14px;opacity:0.9;">Over or under sensitivity to sensory information</p>
+      <div class="root-detail">
+        <ul>
+          <li>Related to vision, hearing, smell, touch and taste</li>
+          <li>Sensory overload can look like "naughtiness" when it's actually overwhelm</li>
+          <li>Environment plays a big role — light, noise, temperature all matter</li>
+          <li>Reducing sensory triggers can dramatically reduce difficult behaviour</li>
+        </ul>
+      </div>
+      <div class="tap-hint">Tap to expand</div>
+    </div>
+  </div>
+</section>
+
+<!-- ICEBERG PRINCIPLE -->
+<section>
+  <div class="iceberg-section">
+    <div class="iceberg-title">🧊 The Iceberg Principle</div>
+    <p class="iceberg-sub">The behaviour you see is just the tip. What drives it is hidden beneath the surface. Tap a cause below to remember what might be driving the behaviour.</p>
+    <div class="iceberg-visual">
+      <div class="ice-above">
+        <h4>👁️ What you see (above the surface)</h4>
+        <div class="ice-behaviours">
+          <span class="beh-chip">Shouting</span>
+          <span class="beh-chip">Hitting</span>
+          <span class="beh-chip">Refusing</span>
+          <span class="beh-chip">Running away</span>
+          <span class="beh-chip">Crying</span>
+          <span class="beh-chip">Self-harming</span>
+          <span class="beh-chip">Throwing things</span>
+          <span class="beh-chip">Shutting down</span>
+        </div>
+      </div>
+      <div class="waterline-label">~ waterline ~</div>
+      <div class="ice-below">
+        <h4>💧 Hidden causes (beneath the surface)</h4>
+        <div class="causes-grid">
+          <div class="cause-item">Can't communicate a need</div>
+          <div class="cause-item">Sensory overwhelm</div>
+          <div class="cause-item">Anxiety about a change</div>
+          <div class="cause-item">Social confusion</div>
+          <div class="cause-item">Unexpected change to routine</div>
+          <div class="cause-item">Frustration</div>
+          <div class="cause-item">Hunger or tiredness</div>
+          <div class="cause-item">Fear or perceived threat</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STAR ANALYSIS -->
+<section class="star-section">
+  <h2>⭐ The STAR Analysis Tool</h2>
+  <p class="section-intro">When a behaviour keeps happening, use the STAR framework to investigate. It assumes every behaviour serves a purpose — your job is to figure out what that purpose is. Tap each area to explore.</p>
+  <div class="star-grid">
+    <div class="star-card settings" onclick="toggleStar(this)">
+      <div class="star-letter">S</div>
+      <h3>Settings</h3>
+      <p class="star-summary">Where and when does the behaviour happen?</p>
+      <div class="star-detail">Consider the environment carefully. What is the light like? Is it noisy? Is it crowded? Is the child unwell or tired? Physical and environmental factors set the scene for what follows.</div>
+      <div class="star-hint">Tap to see detail ▾</div>
+    </div>
+    <div class="star-card triggers" onclick="toggleStar(this)">
+      <div class="star-letter">T</div>
+      <h3>Triggers</h3>
+      <p class="star-summary">What sets the behaviour off?</p>
+      <div class="star-detail">Look for what happened immediately before the behaviour. Triggers can build up throughout the day — what seems small might be "the last straw." Keep a diary to spot patterns over time.</div>
+      <div class="star-hint">Tap to see detail ▾</div>
+    </div>
+    <div class="star-card actions" onclick="toggleStar(this)">
+      <div class="star-letter">A</div>
+      <h3>Actions</h3>
+      <p class="star-summary">Exactly what does the behaviour look like?</p>
+      <div class="star-detail">Describe the behaviour precisely — not "they were naughty" but "they threw the cup, screamed for 3 minutes, then lay on the floor." Precision helps you spot what's really happening.</div>
+      <div class="star-hint">Tap to see detail ▾</div>
+    </div>
+    <div class="star-card results" onclick="toggleStar(this)">
+      <div class="star-letter">R</div>
+      <h3>Results</h3>
+      <p class="star-summary">What happens afterwards?</p>
+      <div class="star-detail">What follows the behaviour determines whether it's likely to happen again. If the behaviour "works" (they get what they want, escape something they don't like, or get attention), it will be repeated. Changing the result can change the behaviour.</div>
+      <div class="star-hint">Tap to see detail ▾</div>
+    </div>
+  </div>
+  <p style="font-size:13.5px;color:var(--subtext);margin-top:18px;text-align:center;">Free STAR templates available at <a href="https://www.autismwestmidlands.co.uk" style="color:var(--teal)">autismwestmidlands.co.uk</a></p>
+</section>
+
+<!-- STRATEGY TOOLKIT -->
+<div class="toolkit-section">
+  <div class="toolkit-inner">
+    <h2>🛠️ Your Strategy Toolkit</h2>
+    <p class="section-intro">There's no single answer — different strategies work at different times. Explore the categories below to find what might help your child.</p>
+
+    <div class="strategy-tabs">
+      <button class="strat-tab active" onclick="showStrat('environment', this)">🏠 Environment</button>
+      <button class="strat-tab" onclick="showStrat('communication', this)">💬 Communication</button>
+      <button class="strat-tab" onclick="showStrat('emotions', this)">❤️ Managing Emotions</button>
+      <button class="strat-tab" onclick="showStrat('positive', this)">✅ Positive Behaviour</button>
+      <button class="strat-tab" onclick="showStrat('inmoment', this)">⚡ In the Moment</button>
+    </div>
+
+    <div class="strat-panel active" id="strat-environment">
+      <div class="tips-grid-2">
+        <div class="tip2 purple">
+          <div class="t2-icon">🔕</div>
+          <div><strong>Reduce stimulation</strong><p>Keep your child's environment calm with low levels of noise, bright lights and busyness where possible.</p></div>
+        </div>
+        <div class="tip2 purple">
+          <div class="t2-icon">📅</div>
+          <div><strong>Visual timetables</strong><p>A visual timetable helps your child understand what's coming next, reducing anxiety about transitions and change. Free templates at do2learn.co.uk</p></div>
+        </div>
+        <div class="tip2 purple">
+          <div class="t2-icon">🎯</div>
+          <div><strong>Predictability is calming</strong><p>Routine reduces the anxiety that underlies much difficult behaviour. When changes must happen, give as much advance notice as possible.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="strat-panel" id="strat-communication">
+      <div class="tips-grid-2">
+        <div class="tip2 blue">
+          <div class="t2-icon">🗣️</div>
+          <div><strong>Use simple language</strong><p>Use words your child will understand. Avoid sarcasm and idioms — they may be taken literally.</p></div>
+        </div>
+        <div class="tip2 blue">
+          <div class="t2-icon">➡️</div>
+          <div><strong>Say things in order</strong><p>"Put your shoes on, then we'll go to the park" — say instructions in the sequence they'll happen.</p></div>
+        </div>
+        <div class="tip2 blue">
+          <div class="t2-icon">🔁</div>
+          <div><strong>Use repetition</strong><p>Repetition helps with memory and processing. Don't expect something to "stick" the first time it's said.</p></div>
+        </div>
+        <div class="tip2 blue">
+          <div class="t2-icon">📖</div>
+          <div><strong>Social Stories</strong><p>Short descriptions of situations your child finds difficult, explaining what to expect and why. Visit letkidsdream.webs.com for examples.</p></div>
+        </div>
+        <div class="tip2 blue">
+          <div class="t2-icon">👋</div>
+          <div><strong>Teach social skills directly</strong><p>Don't assume — teach things like personal space, appropriate topics and non-verbal cues explicitly. Contact CHAPS (Cheshire Autism Practical Support) for further help.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="strat-panel" id="strat-emotions">
+      <div class="tips-grid-2">
+        <div class="tip2 orange">
+          <div class="t2-icon">📊</div>
+          <div><strong>Emotion scales</strong><p>Visual anger scales, arousal charts and facial expression charts help children identify and name their feelings. Find resources at do2learn.co.uk</p></div>
+        </div>
+        <div class="tip2 orange">
+          <div class="t2-icon">🎵</div>
+          <div><strong>Anger management techniques</strong><p>Counting exercises, listening to music, and learning to walk away are all valuable skills to teach and practise.</p></div>
+        </div>
+        <div class="tip2 orange">
+          <div class="t2-icon">🧘</div>
+          <div><strong>Relaxation strategies</strong><p>Deep breathing, massage, calming activities and positive thinking can all help your child manage anger and anxiety.</p></div>
+        </div>
+        <div class="tip2 orange">
+          <div class="t2-icon">🏃</div>
+          <div><strong>Physical activity</strong><p>Exercise is a powerful regulator of anxiety and mood. Building regular physical activity into the day can make a significant difference.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="strat-panel" id="strat-positive">
+      <div class="tips-grid-2">
+        <div class="tip2 green">
+          <div class="t2-icon">🌟</div>
+          <div><strong>Positive Reinforcement</strong><p>Reward the behaviour you want to see. Keep rewards small, achievable and varied. Verbal praise that describes the specific behaviour works well too.</p></div>
+        </div>
+        <div class="tip2 green">
+          <div class="t2-icon">📋</div>
+          <div><strong>Reward charts</strong><p>Visual charts can be very motivating. Targets should be realistic and achievable — early success builds momentum. Free charts at freeprintablebehaviourcharts.com</p></div>
+        </div>
+        <div class="tip2 green">
+          <div class="t2-icon">🆕</div>
+          <div><strong>Focus on new skills</strong><p>The goal isn't just to stop a behaviour — it's to give your child other ways to get what they need. Always think: "what skill can I replace this with?"</p></div>
+        </div>
+        <div class="tip2 green">
+          <div class="t2-icon">🎯</div>
+          <div><strong>One or two at a time</strong><p>When making changes, focus on one or two behaviours only — the ones most affecting daily life. Trying to tackle everything at once is overwhelming for everyone.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="strat-panel" id="strat-inmoment">
+      <div class="tips-grid-2">
+        <div class="tip2 teal">
+          <div class="t2-icon">🙈</div>
+          <div><strong>Planned Ignoring</strong><p>Ignore the behaviour, not the child. Useful for attention-seeking behaviours — but always pair with positive reinforcement so the child learns a better way to get attention.</p></div>
+        </div>
+        <div class="tip2 teal">
+          <div class="t2-icon">↩️</div>
+          <div><strong>Redirection</strong><p>Redirect your child's attention to defuse or prevent escalation. Move them physically, or shift their focus to something calming or engaging.</p></div>
+        </div>
+        <div class="tip2 teal">
+          <div class="t2-icon">⚠️</div>
+          <div><strong>Know your limits</strong><p>Stop using planned ignoring immediately if the child or anyone around them is at risk of being hurt. Safety always comes first.</p></div>
+        </div>
+        <div class="tip2 teal">
+          <div class="t2-icon">🔄</div>
+          <div><strong>Be consistent</strong><p>Inconsistency is one of the biggest barriers to changing behaviour. Everyone around the child needs to respond in the same way.</p></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  Based on content from the ASD Support Pack &nbsp;•&nbsp; Source: National Autistic Society, Autism Education Trust &amp; The Cygnet Parenting Programme &nbsp;•&nbsp; NHS Mid Cheshire Hospitals Foundation Trust (July 2020)
+</footer>
+
+<script>
+  function toggleRoot(card) {
+    card.classList.toggle('open');
+  }
+
+  function toggleStar(card) {
+    card.classList.toggle('open');
+  }
+
+  function showStrat(id, btn) {
+    document.querySelectorAll('.strat-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.strat-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('strat-' + id).classList.add('active');
+    btn.classList.add('active');
+  }
+</script>
+</body>
+</html>

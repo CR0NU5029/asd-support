@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Autism &amp; Sensory Differences – Interactive Explorer</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #FDF6EE;
+      --orange: #E8875A;
+      --teal: #5BB8AC;
+      --yellow: #F5CE5A;
+      --purple: #9B7EBD;
+      --coral: #E87A7A;
+      --blue: #6BA3D6;
+      --green: #6BBF7B;
+      --text: #3D3440;
+      --subtext: #7A6E7F;
+    }
+
+    body {
+      font-family: 'Nunito', system-ui, sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* HERO */
+    .hero {
+      background: linear-gradient(135deg, #5BB8AC 0%, #6BA3D6 100%);
+      color: white;
+      padding: 48px 24px 40px;
+      text-align: center;
+    }
+    .hero-icon { font-size: 52px; margin-bottom: 12px; }
+    .hero h1 { font-size: clamp(26px, 5vw, 40px); font-weight: 900; margin-bottom: 10px; }
+    .hero p { font-size: 16.5px; opacity: 0.92; max-width: 620px; margin: 0 auto; }
+
+    /* INTRO EXPLAINER */
+    .intro {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 36px 24px 12px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 600px) { .intro { grid-template-columns: 1fr; } }
+    .intro-card {
+      border-radius: 16px;
+      padding: 20px 22px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+    .intro-card.hypo { background: #EDF7F0; border-left: 5px solid var(--green); }
+    .intro-card.hyper { background: #FFF0F2; border-left: 5px solid var(--coral); }
+    .intro-card .i-icon { font-size: 32px; flex-shrink: 0; }
+    .intro-card h3 { font-size: 18px; font-weight: 800; margin-bottom: 6px; }
+    .intro-card.hypo h3 { color: #3A7A45; }
+    .intro-card.hyper h3 { color: #A03040; }
+    .intro-card p { font-size: 14px; color: var(--subtext); }
+
+    /* SENSE NAV */
+    .sense-nav {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding: 28px 20px 8px;
+      flex-wrap: wrap;
+    }
+    .sense-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 12px 20px;
+      border: 3px solid transparent;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.22s;
+      background: white;
+      font-family: inherit;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      min-width: 80px;
+    }
+    .sense-btn .s-icon { font-size: 28px; }
+    .sense-btn .s-name { font-size: 12px; font-weight: 800; color: var(--subtext); }
+    .sense-btn.active, .sense-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.12); }
+    .sense-btn[data-sense="sight"].active   { border-color: #F5CE5A; background: #FFFCE8; }
+    .sense-btn[data-sense="sound"].active   { border-color: #6BA3D6; background: #EFF5FC; }
+    .sense-btn[data-sense="smell"].active   { border-color: #9B7EBD; background: #F4EEFB; }
+    .sense-btn[data-sense="taste"].active   { border-color: #E8875A; background: #FFF0E8; }
+    .sense-btn[data-sense="touch"].active   { border-color: #E87A7A; background: #FFF0F2; }
+
+    /* SENSE PANEL */
+    .sense-panels { max-width: 960px; margin: 0 auto; padding: 12px 20px 40px; }
+    .sense-panel { display: none; animation: fadeIn 0.3s ease; }
+    .sense-panel.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    .sense-panel-header {
+      border-radius: 18px 18px 0 0;
+      padding: 22px 28px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .panel-emoji { font-size: 40px; }
+    .panel-title { font-size: 26px; font-weight: 900; color: white; }
+    .panel-sub { font-size: 14px; color: rgba(255,255,255,0.85); margin-top: 2px; }
+
+    .sight-header   { background: linear-gradient(135deg, #F5CE5A, #E8AB3A); }
+    .sound-header   { background: linear-gradient(135deg, #6BA3D6, #4A7EB8); }
+    .smell-header   { background: linear-gradient(135deg, #9B7EBD, #7A5CA0); }
+    .taste-header   { background: linear-gradient(135deg, #E8875A, #D06035); }
+    .touch-header   { background: linear-gradient(135deg, #E87A7A, #D05050); }
+
+    .sense-content {
+      background: white;
+      border-radius: 0 0 18px 18px;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    .ht-tabs {
+      display: flex;
+      border-bottom: 2px solid #F5F0FA;
+    }
+    .ht-tab {
+      flex: 1;
+      padding: 14px;
+      text-align: center;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 800;
+      border: none;
+      background: white;
+      transition: all 0.2s;
+      color: var(--subtext);
+    }
+    .ht-tab.active.hypo { background: #EDF7F0; color: #3A7A45; border-bottom: 3px solid var(--green); }
+    .ht-tab.active.hyper { background: #FFF0F2; color: #A03040; border-bottom: 3px solid var(--coral); }
+
+    .ht-panel { display: none; padding: 24px 28px; animation: fadeIn 0.25s ease; }
+    .ht-panel.active { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media (max-width: 600px) { .ht-panel.active { grid-template-columns: 1fr; } }
+
+    .ht-section h4 {
+      font-size: 15px;
+      font-weight: 900;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ht-section ul { list-style: none; padding: 0; }
+    .ht-section li {
+      font-size: 14px;
+      color: var(--text);
+      padding: 8px 12px;
+      margin-bottom: 6px;
+      border-radius: 8px;
+      position: relative;
+      padding-left: 28px;
+    }
+    .signs-section li { background: #FAFAFA; }
+    .signs-section li::before { content: "•"; position: absolute; left: 10px; font-weight: 800; color: var(--subtext); }
+    .strategies-section-inner li { background: var(--teal-light, #EAF7F5); }
+    .strategies-section-inner li::before { content: "✓"; position: absolute; left: 10px; font-weight: 800; color: var(--teal); }
+
+    /* ALL SENSES QUICK OVERVIEW */
+    .overview-section {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 20px 48px;
+    }
+    .overview-section h2 { font-size: 22px; font-weight: 900; text-align: center; margin-bottom: 20px; color: var(--text); }
+
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+      gap: 14px;
+    }
+    .overview-card {
+      background: white;
+      border-radius: 14px;
+      padding: 18px 16px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .overview-card:hover { transform: translateY(-3px); }
+    .overview-card .oc-icon { font-size: 34px; margin-bottom: 8px; }
+    .overview-card h4 { font-size: 14px; font-weight: 800; margin-bottom: 6px; }
+    .overview-card p { font-size: 12px; color: var(--subtext); }
+
+    /* TIPS FOOTER */
+    .tips-footer {
+      background: white;
+      border-top: 4px solid var(--teal);
+      padding: 32px 20px;
+    }
+    .tips-footer-inner { max-width: 900px; margin: 0 auto; }
+    .tips-footer h2 { font-size: 22px; font-weight: 900; text-align: center; margin-bottom: 20px; }
+    .general-tips {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 14px;
+    }
+    .gen-tip {
+      background: #EAF7F5;
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-size: 14px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .gen-tip-icon { font-size: 22px; flex-shrink: 0; }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 13px;
+      color: var(--subtext);
+      background: var(--cream);
+    }
+  </style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-icon">🧠</div>
+  <h1>Sensory Differences in Autism</h1>
+  <p>Every child on the autism spectrum experiences the world through their senses differently. Explore each sense to understand what your child might be experiencing — and what can help.</p>
+</div>
+
+<!-- HYPO / HYPER EXPLAINER -->
+<div class="intro">
+  <div class="intro-card hypo">
+    <div class="i-icon">📉</div>
+    <div>
+      <h3>Hypo-sensitive (Under)</h3>
+      <p>The brain receives <strong>less</strong> sensory information than typical. The child may seek out more stimulation to feel a response — louder sounds, stronger smells, tighter hugs.</p>
+    </div>
+  </div>
+  <div class="intro-card hyper">
+    <div class="i-icon">📈</div>
+    <div>
+      <h3>Hyper-sensitive (Over)</h3>
+      <p>The brain receives <strong>more</strong> sensory information than it can handle. The child may be overwhelmed by everyday sights, sounds, textures or smells that others barely notice.</p>
+    </div>
+  </div>
+</div>
+<p style="text-align:center;font-size:14px;color:var(--subtext);padding:8px 20px 0;max-width:700px;margin:0 auto;">A child can be hypo-sensitive in some senses and hyper-sensitive in others. This can also vary day-to-day depending on anxiety and stress levels.</p>
+
+<!-- SENSE SELECTOR -->
+<div class="sense-nav">
+  <button class="sense-btn active" data-sense="sight" onclick="showSense('sight', this)">
+    <span class="s-icon">👁️</span>
+    <span class="s-name">SIGHT</span>
+  </button>
+  <button class="sense-btn" data-sense="sound" onclick="showSense('sound', this)">
+    <span class="s-icon">👂</span>
+    <span class="s-name">SOUND</span>
+  </button>
+  <button class="sense-btn" data-sense="smell" onclick="showSense('smell', this)">
+    <span class="s-icon">👃</span>
+    <span class="s-name">SMELL</span>
+  </button>
+  <button class="sense-btn" data-sense="taste" onclick="showSense('taste', this)">
+    <span class="s-icon">👅</span>
+    <span class="s-name">TASTE</span>
+  </button>
+  <button class="sense-btn" data-sense="touch" onclick="showSense('touch', this)">
+    <span class="s-icon">🤚</span>
+    <span class="s-name">TOUCH</span>
+  </button>
+</div>
+
+<!-- SENSE PANELS -->
+<div class="sense-panels">
+
+  <!-- SIGHT -->
+  <div class="sense-panel active" id="panel-sight">
+    <div class="sense-panel-header sight-header">
+      <div class="panel-emoji">👁️</div>
+      <div>
+        <div class="panel-title">Sight</div>
+        <div class="panel-sub">How visual information is processed</div>
+      </div>
+    </div>
+    <div class="sense-content">
+      <div class="ht-tabs">
+        <button class="ht-tab active hypo" onclick="showHT('sight','hypo',this)">📉 Under-Sensitive (Hypo)</button>
+        <button class="ht-tab hyper" onclick="showHT('sight','hyper',this)">📈 Over-Sensitive (Hyper)</button>
+      </div>
+      <div class="ht-panel active" id="sight-hypo">
+        <div class="ht-section signs-section">
+          <h4>👁️ What they might experience</h4>
+          <ul>
+            <li>Objects can appear dark and lose some of their features</li>
+            <li>Central vision may be blurred, but peripheral vision is sharp</li>
+            <li>A central object may appear magnified while surroundings blur</li>
+            <li>Poor depth perception — difficulties with throwing and catching</li>
+          </ul>
+        </div>
+        <div class="ht-section strategies-section-inner">
+          <h4>✅ Strategies that can help</h4>
+          <ul>
+            <li>Use visual supports — photographs, written words, real objects, coloured pictures</li>
+            <li>Coloured lenses can help with central vision issues</li>
+            <li>Practise throwing and catching as part of a daily routine to build the skill</li>
+          </ul>
+        </div>
+      </div>
+      <div class="ht-panel" id="sight-hyper">
+        <div class="ht-section signs-section">
+          <h4>👁️ What they might experience</h4>
+          <ul>
+            <li>Objects and bright lights can appear to jump or move around</li>
+            <li>Images can fragment or appear distorted</li>
+            <li>Easier to focus on small details rather than whole objects</li>
+            <li>Difficulty sleeping due to sensitivity to light</li>
+          </ul>
+        </div>
+        <div class="ht-section strategies-section-inner">
+          <h4>✅ Strategies that can help</h4>
+          <ul>
+            <li>Reduce bright lights in the environment where possible</li>
+            <li>Use sunglasses outdoors and blackout curtains for sleep</li>
+            <li>Use screens or partitions to block visual distractions — especially useful in classrooms</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOUND -->
+  <div class="sense-panel" id="panel-sound">
+    <div class="sense-panel-header sound-header">
+      <div class="panel-emoji">👂</div>
+      <div>
+        <div class="panel-title">Sound</div>
+        <div class="panel-sub">How auditory information is processed</div>
+      </div>
+    </div>
+    <div class="sense-content">
+      <div class="ht-tabs">
+        <button class="ht-tab active hypo" onclick="showHT('sound','hypo',this)">📉 Under-Sensitive (Hypo)</button>
+        <button class="ht-tab hyper" onclick="showHT('sound','hyper',this)">📈 Over-Sensitive (Hyper)</button>
+      </div>
+      <div class="ht-panel active" id="sound-hypo">
+        <div class="ht-section signs-section">
+          <h4>👂 What they might experience</h4>
+          <ul>
+            <li>May only hear sounds through one ear</li>
+            <li>May not acknowledge or respond to certain sounds</li>
+            <li>Can enjoy loud music and noisy places</li>
+            <li>Often talks loudly; may bang doors and objects</li>
+          </ul>
+        </div>
+        <div class="ht-section strategies-section-inner">
+          <h4>✅ Strategies that can help</h4>
+          <ul>
+            <li>Use visual supports alongside verbal communication</li>
+            <li>Ensure others know to communicate appropriately (face-to-face, clearly)</li>
+            <li>Include enjoyable, noisy activities in daily routines to meet their sensory needs</li>
+          </ul>
+        </div>
+      </div>
+      <div class="ht-panel" id="sound-hyper">
+        <div class="ht-section signs-section">
+          <h4>👂 What they might experience</h4>
+          <ul>
+            <li>Noise can be magnified — sounds become distorted or painfully loud</li>
+            <li>Can hear distant sounds clearly when others cannot</li>
+            <li>Unable to filter background noise, affecting concentration</li>
+            <li>Some sounds can be physically painful</li>
+          </ul>
+        </div>
+        <div class="ht-section strategies-section-inner">
+          <h4>✅ Strategies that can help</h4>
+          <ul>
+            <li>Shut doors and windows to reduce external noise where possible</li>
+            <li>Add carpets and soft furnishings to muffle harsh sounds in large rooms</li>
+            <li>Use ear plugs or music through headphones if appropriate</li>
+            <li>Prepare your child before entering noisy environments</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SMELL -->
+  <div class="sense-panel" id="panel-smell">
+    <div class="sense-panel-header smell-header">
+      <div class="panel-emoji">👃</div>
+      <div>
+        <div class="panel-title">Smell</div>
+        <div class="panel-sub">How olfactory information is processed</div>
+      </div>
+    </div>
+    <div class="sense-content">
+      <div class="ht-tabs">
+        <button class="ht-tab active hypo" onclick="showHT('smell','hypo',this)">📉 Under-Sensitive (Hypo)</button>
+        <button class="ht-tab hyper" onclick="showHT('smell','hyper',this)">📈 Over-Sensitive (Hyper)</button>
+      </div>
+      <div class="ht-panel active" id="smell-hypo">
+        <div class="ht-section signs-section">
+          <h4>👃 What they might experience</h4>
+          <ul>
+            <li>Little or no sense of smell</li>
+            <li>Failure to recognise strong odours, including their own body odour</li>
+            <li>May actively seek out strong, unusual smells</li>
+          </ul>
+        </div>
+        <div class="ht-section strategies-section-inner">
+          <h4>✅ Strategies that can help</h4>
+          <ul>
+            <li>Create a fun routine that includes attention to personal hygiene</li>
+            <li>Use strong-smelling products to distract from inappropriate smell-seeking</li>
+            <li>Use favourite strong smells as rewards for positive behaviour</li>
+          </ul>
+        </div>
+      </div>
+      <div class="ht-panel" id="smell-hyper">
+        <div class="ht-section signs-section">
+          <h4>👃 What they might experience</h4>
+          <ul>
+            <li>Smells can feel intense and overwhelming</li>
+            <li>May dislike people wearing perfume, strong shampoos or deodorant</li>
+            <li>May avoid places like public toilets, canteens or restaurants</li>
+          </ul>
+        </div>
+        <div class="ht-section strategies-section-inner">
+          <h4>✅ Strategies that can help</h4>
+          <ul>
+            <li>Switch to unscented cleaning products, detergents and toiletries</li>
+            <li>Avoid wearing perfume around your child</li>
+            <li>Keep the home as fragrance-free as possible</li>
+            <li>Use a favourite subtle smell (on a tissue) to distract from strong scents and build tolerance gradually</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TASTE -->
+  <div class="sense-panel" id="panel-taste">
+    <div class="sense-panel-header taste-header">
+      <div class="panel-emoji">👅</div>
+      <div>
+        <div class="panel-title">Taste</div>
+        <div class="panel-sub">How gustatory information is processed</div>
+      </div>
+    </div>
+    <div class="sense-content">
+      <div class="ht-tabs">
+        <button class="ht-tab active hypo" onclick="showHT('taste','hypo',this)">📉 Under-Sensitive (Hypo)</button>
+        <button class="ht-tab hyper" onclick="showHT('taste','hyper',this)">📈 Over-Sensitive (Hyper)</button>
+      </div>
+      <div class="ht-panel active" id="taste-hypo">
+        <div class="ht-section signs-section">
+          <h4>👅 What they might experience</h4>
+          <ul>
+            <li>Seeks out very spicy or intensely flavoured foods</li>
+            <li>May eat non-edible items such as stones, grass, clay or metal (known as pica)</li>
+            <li>May need very strong flavours to register taste at all</li>
+          </ul>
+        </div>
+        <div class="ht-section strategies-section-inner">
+          <h4>✅ Strategies that can help</h4>
+          <ul>
+            <li>If diet has some variety, it may not be a clinical concern — speak to a professional if worried</li>
+            <li>Introduce new foods very gradually, in tiny steps</li>
+            <li>Involve your child in food preparation to increase familiarity</li>
+            <li>Use reward charts for trying new foods</li>
+          </ul>
+        </div>
+      </div>
+      <div class="ht-panel" id="taste-hyper">
+        <div class="ht-section signs-section">
+          <h4>👅 What they might experience</h4>
+          <ul>
+            <li>Finds many flavours too strong and overwhelming</li>
+            <li>Very sensitive taste buds — foods that seem mild to others can feel intense</li>
+            <li>Often has a restricted diet, preferring bland or familiar foods</li>
+          </ul>
+        </div>
+        <div class="ht-section strategies-section-inner">
+          <h4>✅ Strategies that can help</h4>
+          <ul>
+            <li>Take small steps — introduce new foods alongside familiar safe foods</li>
+            <li>Use visual supports (pictures of food) to provide information and reduce anxiety about meals</li>
+            <li>Set mealtimes and menu planning give comforting structure and routine</li>
+            <li>Change food textures if needed (e.g. pureeing or blending) and introduce variety slowly</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOUCH -->
+  <div class="sense-panel" id="panel-touch">
+    <div class="sense-panel-header touch-header">
+      <div class="panel-emoji">🤚</div>
+      <div>
+        <div class="panel-title">Touch</div>
+        <div class="panel-sub">How tactile information is processed — including heat, cold and pain</div>
+      </div>
+    </div>
+    <div class="sense-content">
+      <div class="ht-tabs">
+        <button class="ht-tab active hypo" onclick="showHT('touch','hypo',this)">📉 Under-Sensitive (Hypo)</button>
+        <button class="ht-tab hyper" onclick="showHT('touch','hyper',this)">📈 Over-Sensitive (Hyper)</button>
+      </div>
+      <div class="ht-panel active" id="touch-hypo">
+        <div class="ht-section signs-section">
+          <h4>🤚 What they might experience</h4>
+          <ul>
+            <li>May hold others very tightly — seeking deep pressure</li>
+            <li>High pain threshold — may not react to injuries that would hurt others</li>
+            <li>May not feel food properly in the mouth</li>
+            <li>May enjoy heavy objects, weighted items, or tight clothing</li>
+            <li>May chew clothing, hair or inedible objects for sensory input</li>
+            <li>May enjoy textures others find unpleasant (smearing, touching different surfaces)</li>
+          </ul>
+        </div>
+        <div class="ht-section strategies-section-inner">
+          <h4>✅ Strategies that can help</h4>
+          <ul>
+            <li>Use weighted blankets or sleeping bags to provide calming deep pressure</li>
+            <li>Provide appropriate objects to satisfy tactile needs (jelly, water play, textured toys)</li>
+            <li>Offer appropriate chew toys (available from specialist suppliers) as a safe alternative</li>
+          </ul>
+        </div>
+      </div>
+      <div class="ht-panel" id="touch-hyper">
+        <div class="ht-section signs-section">
+          <h4>🤚 What they might experience</h4>
+          <ul>
+            <li>Touch can be painful or deeply uncomfortable</li>
+            <li>May dislike objects on hands or feet (socks, shoes, tags)</li>
+            <li>Difficulties with hair brushing, washing or nail cutting</li>
+            <li>Food textures may feel unbearable</li>
+            <li>Can only tolerate specific types of clothing (seams, labels, fabric type)</li>
+          </ul>
+        </div>
+        <div class="ht-section strategies-section-inner">
+          <h4>✅ Strategies that can help</h4>
+          <ul>
+            <li>Always warn your child before touching them — approach from the front</li>
+            <li>Remember: a hug may feel painful rather than comforting — follow their lead</li>
+            <li>Remove all tags and labels from clothing</li>
+            <li>Allow them to wear clothes they feel comfortable in where possible</li>
+            <li>Gradually introduce different textures with a box of materials — reward new experiences</li>
+            <li>Change food textures (e.g. puree) rather than forcing the original texture</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GENERAL TIPS -->
+<div class="tips-footer">
+  <div class="tips-footer-inner">
+    <h2>💡 Good to Know</h2>
+    <div class="general-tips">
+      <div class="gen-tip">
+        <div class="gen-tip-icon">🔄</div>
+        <p><strong>It can change daily.</strong> Sensory sensitivities can vary depending on your child's anxiety levels, tiredness and stress on any given day.</p>
+      </div>
+      <div class="gen-tip">
+        <div class="gen-tip-icon">🧩</div>
+        <p><strong>Every child is different.</strong> It's impossible to predict how sensory issues will impact each individual — observe and learn your child's unique profile.</p>
+      </div>
+      <div class="gen-tip">
+        <div class="gen-tip-icon">🔎</div>
+        <p><strong>Behaviour is communication.</strong> Many "difficult" behaviours are actually a response to sensory overwhelm. Understanding the source helps you respond better.</p>
+      </div>
+      <div class="gen-tip">
+        <div class="gen-tip-icon">📋</div>
+        <p><strong>Sensory profiling questionnaires</strong> can help identify your child's specific sensory issues. Find them at <a href="https://www.autismeducationtrust.org.uk" target="_blank" style="color:var(--teal)">autismeducationtrust.org.uk</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  Based on content from the ASD Support Pack &nbsp;•&nbsp; Source: National Autistic Society, Autism Education Trust &amp; The Cygnet Parenting Programme &nbsp;•&nbsp; NHS Mid Cheshire Hospitals Foundation Trust (July 2020)
+</footer>
+
+<script>
+  function showSense(sense, btn) {
+    document.querySelectorAll('.sense-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.sense-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('panel-' + sense).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  function showHT(sense, type, btn) {
+    const panel = document.getElementById('panel-' + sense);
+    panel.querySelectorAll('.ht-panel').forEach(p => p.classList.remove('active'));
+    panel.querySelectorAll('.ht-tab').forEach(t => { t.classList.remove('active', 'hypo', 'hyper'); });
+    document.getElementById(sense + '-' + type).classList.add('active');
+    btn.classList.add('active', type);
+  }
+</script>
+</body>
+</html>

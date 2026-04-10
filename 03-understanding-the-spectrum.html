@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Understanding the Spectrum – The Spikey Profile</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #FDF6EE;
+      --orange: #E8875A; --orange-light: #FFF0E8;
+      --teal: #5BB8AC;   --teal-light: #EAF7F5;
+      --yellow: #F5CE5A; --yellow-light: #FFFBEA;
+      --purple: #9B7EBD; --purple-light: #F4EEFB;
+      --coral: #E87A7A;  --coral-light: #FFF0F2;
+      --blue: #6BA3D6;   --blue-light: #EFF5FC;
+      --green: #6BBF7B;  --green-light: #EDF7F0;
+      --text: #3D3440;   --subtext: #7A6E7F;
+    }
+
+    body { font-family: 'Nunito', system-ui, sans-serif; background: var(--cream); color: var(--text); line-height: 1.6; }
+
+    /* HERO */
+    .hero {
+      background: linear-gradient(135deg, #9B7EBD 0%, #E8875A 100%);
+      color: white; padding: 52px 24px 44px; text-align: center;
+    }
+    .hero-icon { font-size: 56px; margin-bottom: 12px; }
+    .hero h1 { font-size: clamp(26px, 5vw, 42px); font-weight: 900; margin-bottom: 10px; }
+    .hero p { font-size: 17px; opacity: 0.92; max-width: 660px; margin: 0 auto; }
+
+    /* SECTION */
+    .section { max-width: 1000px; margin: 0 auto; padding: 48px 20px 0; }
+    .section h2 { font-size: clamp(20px, 3vw, 28px); font-weight: 900; margin-bottom: 8px; }
+    .section .intro { font-size: 15px; color: var(--subtext); margin-bottom: 28px; max-width: 700px; }
+
+    /* OLD VS NEW */
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 600px) { .comparison { grid-template-columns: 1fr; } }
+
+    .compare-card {
+      border-radius: 18px;
+      padding: 24px 22px;
+      position: relative;
+      overflow: hidden;
+    }
+    .compare-card.old { background: #F0EAF8; border: 2px dashed #C8B8D8; }
+    .compare-card.new { background: var(--cream); border: 2px solid var(--purple); }
+    .compare-card h3 { font-size: 16px; font-weight: 900; margin-bottom: 16px; }
+    .compare-card.old h3 { color: #8060A0; }
+    .compare-card.new h3 { color: var(--purple); }
+
+    /* Linear spectrum visual */
+    .linear-vis {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 12px;
+    }
+    .linear-track {
+      flex: 1;
+      height: 28px;
+      border-radius: 14px;
+      background: linear-gradient(90deg, #A0E8A0, #F5CE5A, #E87A7A);
+      position: relative;
+    }
+    .linear-dot {
+      width: 20px; height: 20px;
+      background: white;
+      border: 3px solid #8060A0;
+      border-radius: 50%;
+      position: absolute;
+      top: 4px;
+      cursor: pointer;
+      transition: left 0.3s;
+    }
+    .linear-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #8060A0;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+    .old-caption { font-size: 13px; color: #8060A0; margin-top: 10px; font-style: italic; }
+
+    /* Mini radar for "new" */
+    .mini-spikey {
+      display: flex;
+      justify-content: center;
+      margin: 8px 0;
+    }
+
+    /* MAIN RADAR SECTION */
+    .radar-section {
+      background: white;
+      border-top: 4px solid var(--purple);
+      padding-bottom: 0;
+    }
+    .radar-inner {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 44px 20px;
+    }
+    .radar-inner h2 { font-size: 26px; font-weight: 900; margin-bottom: 8px; }
+    .radar-inner .intro { font-size: 15px; color: var(--subtext); margin-bottom: 24px; }
+
+    /* Profile tabs */
+    .profile-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+      align-items: center;
+    }
+    .profile-tab {
+      padding: 10px 20px;
+      border: 2px solid #E0D8E8;
+      border-radius: 12px;
+      background: white;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--subtext);
+      transition: all 0.2s;
+    }
+    .profile-tab.active { color: white; }
+    .profile-tab[data-profile="a"].active { background: #9B7EBD; border-color: #9B7EBD; }
+    .profile-tab[data-profile="b"].active { background: #6BA3D6; border-color: #6BA3D6; }
+    .profile-tab[data-profile="c"].active { background: #E87A7A; border-color: #E87A7A; }
+    .profile-tab[data-profile="mine"].active { background: var(--orange); border-color: var(--orange); }
+
+    .radar-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      align-items: start;
+    }
+    @media (max-width: 700px) { .radar-layout { grid-template-columns: 1fr; } }
+
+    #radarSvg {
+      width: 100%;
+      height: auto;
+      max-width: 480px;
+      display: block;
+      margin: 0 auto;
+    }
+
+    /* Profile description */
+    .profile-desc {
+      padding: 20px;
+      border-radius: 16px;
+      border: 2px solid #E0D8E8;
+      background: white;
+    }
+    .profile-desc h3 { font-size: 18px; font-weight: 900; margin-bottom: 10px; }
+    .profile-desc .desc-text { font-size: 14px; color: var(--subtext); margin-bottom: 16px; }
+    .dim-bars { display: flex; flex-direction: column; gap: 8px; }
+    .dim-bar { display: flex; align-items: center; gap: 8px; }
+    .dim-name { font-size: 12px; font-weight: 700; width: 130px; flex-shrink: 0; color: var(--text); }
+    .dim-track {
+      flex: 1;
+      height: 14px;
+      background: #F0EAF8;
+      border-radius: 7px;
+      overflow: hidden;
+    }
+    .dim-fill {
+      height: 100%;
+      border-radius: 7px;
+      transition: width 0.6s ease;
+    }
+    .dim-val { font-size: 11px; font-weight: 800; width: 18px; text-align: right; color: var(--subtext); }
+
+    /* Sliders for "My Child" */
+    .sliders-section { display: none; }
+    .sliders-section.visible { display: block; }
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .slider-row label { font-size: 13px; font-weight: 700; width: 150px; flex-shrink: 0; }
+    .slider-row input[type=range] { flex: 1; accent-color: var(--orange); }
+    .slider-row .sv { font-size: 13px; font-weight: 800; width: 20px; text-align: right; }
+
+    /* DIM INFO CARDS */
+    .dims-section {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 20px 48px;
+    }
+    .dims-section h2 { font-size: 24px; font-weight: 900; margin-bottom: 8px; margin-top: 44px; }
+    .dims-section .intro { font-size: 15px; color: var(--subtext); margin-bottom: 24px; }
+    .dims-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 14px;
+    }
+    .dim-card {
+      border-radius: 16px;
+      padding: 18px;
+      cursor: pointer;
+      transition: transform 0.2s;
+      border: 2px solid transparent;
+    }
+    .dim-card:hover { transform: translateY(-3px); }
+    .dim-card .dc-icon { font-size: 28px; margin-bottom: 8px; }
+    .dim-card h4 { font-size: 15px; font-weight: 900; margin-bottom: 6px; }
+    .dim-card .dc-brief { font-size: 13px; color: var(--subtext); }
+    .dim-card .dc-detail { display: none; font-size: 13px; margin-top: 10px; padding-top: 10px; border-top: 2px dashed rgba(0,0,0,0.1); }
+    .dim-card.open .dc-detail { display: block; }
+    .dim-card .dc-hint { font-size: 11px; font-weight: 700; margin-top: 8px; opacity: 0.6; }
+
+    /* INSIGHTS */
+    .insights-section {
+      background: linear-gradient(135deg, #9B7EBD22, #E8875A22);
+      border-top: 4px solid var(--orange);
+      padding: 44px 20px;
+    }
+    .insights-inner { max-width: 1000px; margin: 0 auto; }
+    .insights-inner h2 { font-size: 24px; font-weight: 900; margin-bottom: 24px; text-align: center; }
+    .insights-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 14px;
+    }
+    .insight-card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+    }
+    .insight-card .ins-icon { font-size: 32px; margin-bottom: 10px; }
+    .insight-card h4 { font-size: 15px; font-weight: 800; margin-bottom: 6px; }
+    .insight-card p { font-size: 13.5px; color: var(--subtext); }
+
+    @keyframes fadeIn { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform: translateY(0); } }
+    footer { text-align:center; padding:24px; font-size:13px; color:var(--subtext); background:var(--cream); }
+  </style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-icon">🌟</div>
+  <h1>Understanding the Autism Spectrum</h1>
+  <p>The Spikey Profile — a much better way to understand how autism actually works</p>
+</div>
+
+<!-- OLD VS NEW THINKING -->
+<div class="section">
+  <h2>🔄 A Better Way to Think About Autism</h2>
+  <p class="intro">For years, people imagined autism as a simple scale from "mild" to "severe". This picture is misleading — and it's time to replace it.</p>
+
+  <div class="comparison">
+    <div class="compare-card old">
+      <h3>❌ Old thinking — the linear scale</h3>
+      <div class="linear-vis">
+        <div class="linear-track">
+          <div class="linear-dot" style="left:20%"></div>
+        </div>
+      </div>
+      <div class="linear-labels"><span>Mild</span><span>Moderate</span><span>Severe</span></div>
+      <p class="old-caption">This suggests everyone fits neatly on a single line. It doesn't explain why the same person can be brilliant at one thing and struggle enormously with another.</p>
+      <div style="margin-top:14px;padding:10px 12px;background:#E8D8F0;border-radius:10px;font-size:13px;color:#6040A0;font-weight:700;">
+        ⚠️ Problem: "They seem fine, they can't be that autistic" — this thinking causes real harm when support needs are dismissed.
+      </div>
+    </div>
+
+    <div class="compare-card new">
+      <h3>✅ New thinking — the spikey profile</h3>
+      <div class="mini-spikey">
+        <svg viewBox="0 0 180 180" width="150" height="150">
+          <polygon points="90,20 140,55 155,110 115,155 65,155 25,110 40,55" fill="none" stroke="#E0D8E8" stroke-width="1"/>
+          <polygon points="90,45 122,62 132,95 108,122 72,122 48,95 58,62" fill="none" stroke="#E0D8E8" stroke-width="1"/>
+          <polygon points="90,70 104,79 109,95 97,107 83,107 71,95 76,79" fill="none" stroke="#E0D8E8" stroke-width="1"/>
+          <!-- Spikey profile -->
+          <polygon points="90,52 138,72 132,110 90,148 52,115 38,72" fill="#9B7EBD44" stroke="#9B7EBD" stroke-width="2.5" stroke-linejoin="round"/>
+          <text x="90" y="13" text-anchor="middle" font-size="8" fill="#7A6E7F" font-family="Nunito,sans-serif" font-weight="800">HIGH</text>
+          <text x="90" y="175" text-anchor="middle" font-size="8" fill="#7A6E7F" font-family="Nunito,sans-serif" font-weight="800">Variable</text>
+        </svg>
+      </div>
+      <p style="font-size:13px;color:var(--subtext);">Each person has their own unique shape — high in some areas, lower in others. The same person can be exceptionally strong in one dimension and need significant support in another.</p>
+      <div style="margin-top:14px;padding:10px 12px;background:#EDF7F0;border-radius:10px;font-size:13px;color:#3A7A45;font-weight:700;">
+        ✅ This explains why autistic people are so different from each other — no two profiles are the same!
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RADAR CHART SECTION -->
+<div class="radar-section">
+  <div class="radar-inner">
+    <h2>🕸️ Explore Real Spikey Profiles</h2>
+    <p class="intro">Each example below shows a different profile. Notice how dramatically they differ — this is why "they're all different" is genuinely true, not just a saying. You can also build your child's own profile.</p>
+
+    <div class="profile-tabs">
+      <button class="profile-tab active" data-profile="a" onclick="switchProfile('a', this)">🟣 Example: Child A</button>
+      <button class="profile-tab" data-profile="b" onclick="switchProfile('b', this)">🔵 Example: Child B</button>
+      <button class="profile-tab" data-profile="c" onclick="switchProfile('c', this)">🔴 Example: Child C</button>
+      <button class="profile-tab" data-profile="mine" onclick="switchProfile('mine', this)">🟠 My Child's Profile</button>
+    </div>
+
+    <div class="radar-layout">
+      <div>
+        <svg id="radarSvg" viewBox="0 0 520 520" xmlns="http://www.w3.org/2000/svg"></svg>
+      </div>
+      <div>
+        <div class="profile-desc" id="profileDesc">
+          <!-- filled by JS -->
+        </div>
+        <div class="sliders-section" id="slidersSection">
+          <div style="padding:14px 0 6px;font-size:14px;font-weight:800;color:var(--orange);">🎚️ Adjust to match your child</div>
+          <div id="sliders"></div>
+          <p style="font-size:12px;color:var(--subtext);margin-top:8px;">0 = no challenge / very low ability &nbsp;&nbsp; 5 = significant challenge / exceptional ability<br><em>Remember: this works both ways — high sensory sensitivity IS high on that dimension!</em></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DIMENSION CARDS -->
+<div class="dims-section">
+  <h2>🔎 What Each Dimension Means</h2>
+  <p class="intro">Tap any area to learn more about what challenges and strengths in that dimension can look like day-to-day.</p>
+  <div class="dims-grid" id="dimCards"></div>
+</div>
+
+<!-- KEY INSIGHTS -->
+<div class="insights-section">
+  <div class="insights-inner">
+    <h2>💡 Key Insights for Parents</h2>
+    <div class="insights-grid">
+      <div class="insight-card">
+        <div class="ins-icon">🎭</div>
+        <h4>Masking can hide the profile</h4>
+        <p>Some children work very hard to appear "normal" at school, hiding their struggles. They may seem fine to teachers but be exhausted at home. The real profile might be harder than it looks.</p>
+      </div>
+      <div class="insight-card">
+        <div class="ins-icon">📅</div>
+        <h4>Profiles change over time</h4>
+        <p>The same child's profile can look different as they grow, receive support, and develop. Strengths can increase; areas that were challenging may become easier — and vice versa.</p>
+      </div>
+      <div class="insight-card">
+        <div class="ins-icon">🌡️</div>
+        <h4>Anxiety changes everything</h4>
+        <p>On high-anxiety days, the profile can look much more "spikey". A child who usually copes may suddenly find everything overwhelming when anxious or tired.</p>
+      </div>
+      <div class="insight-card">
+        <div class="ins-icon">⭐</div>
+        <h4>High spikes are strengths too</h4>
+        <p>Areas where your child is exceptionally strong — a deep special interest, remarkable memory, or intense focus — are just as much part of their profile as their challenges. These are real gifts.</p>
+      </div>
+      <div class="insight-card">
+        <div class="ins-icon">🤝</div>
+        <h4>Share the profile with school</h4>
+        <p>Helping teachers understand your child's specific profile — rather than just saying "autistic" — can dramatically improve the support they receive. A Patient Passport can help with this.</p>
+      </div>
+      <div class="insight-card">
+        <div class="ins-icon">❤️</div>
+        <h4>Autism doesn't define them</h4>
+        <p>The profile sits inside your child's unique personality. An outgoing child with autism will still want connection — they'll just need more support navigating it. The profile shapes how, not who.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  Based on content from the ASD Support Pack &nbsp;•&nbsp; Concept by Rebecca Burgess (theartofautism.com) &nbsp;•&nbsp; For parents &amp; carers in Cheshire East
+</footer>
+
+<script>
+  const dims = [
+    { name: "Social Communication", shortName: "Social\nComms", icon: "💬", color: "#9B7EBD",
+      brief: "Understanding social rules, taking turns, reading facial expressions",
+      detail: "This covers how your child communicates with others socially — things like understanding unspoken rules, making and keeping friends, reading body language, and knowing what's appropriate to say. High challenge here doesn't mean they don't want connection; it means the 'how' is hard." },
+    { name: "Sensory Processing", shortName: "Sensory", icon: "🌡️", color: "#E8875A",
+      brief: "How the brain handles sight, sound, smell, touch and taste",
+      detail: "A high score here means significant sensory differences — over or under-sensitivity to one or more senses. This can profoundly affect behaviour, concentration, eating, sleep and anxiety. Sensory differences often go unrecognised as the root cause of many struggles." },
+    { name: "Language", shortName: "Language", icon: "🗣️", color: "#6BA3D6",
+      brief: "Verbal expression, understanding, and literal interpretation",
+      detail: "This includes how your child uses and understands language. They may be highly verbal but still struggle with figurative language, sarcasm, or understanding what others really mean. Or they may have limited speech but rich understanding. High ability here can sometimes mask other challenges." },
+    { name: "Special Interests", shortName: "Special\nInterests", icon: "⭐", color: "#F5CE5A",
+      brief: "Depth of focus and passion in areas of interest",
+      detail: "Many autistic people have intense, focused areas of passion. This can be a remarkable strength — deep knowledge, incredible memory, real expertise. A high score isn't a problem; it's often a superpower. Supporting and channelling special interests is one of the most effective tools parents have." },
+    { name: "Routine & Flexibility", shortName: "Routine &\nFlexibility", icon: "🔁", color: "#E87A7A",
+      brief: "Need for predictability; difficulty with transitions and change",
+      detail: "A high score means strong need for routine and difficulty with unexpected changes. Even small changes (a different route home, a cancelled event) can trigger significant distress. This isn't 'being difficult' — the brain experiences change as genuinely threatening. Preparation and visual schedules help enormously." },
+    { name: "Motor Skills", shortName: "Motor\nSkills", icon: "🏃", color: "#5BB8AC",
+      brief: "Gross and fine motor coordination, physical control",
+      detail: "This covers physical coordination — both large movements (running, climbing) and fine ones (writing, buttons, cutlery). Many autistic children have some motor challenges that can affect everything from handwriting to PE. Occupational therapy can help significantly." },
+    { name: "Emotional Regulation", shortName: "Emotional\nReg.", icon: "❤️", color: "#6BBF7B",
+      brief: "Managing, identifying and expressing emotions",
+      detail: "This is about how well a child can recognise, manage and express their emotions. Many autistic people have significant difficulty identifying what they're feeling (alexithymia) and regulating overwhelming emotions. This is a key contributor to meltdowns — not 'bad behaviour' but emotional overflow." },
+    { name: "Executive Function", shortName: "Executive\nFunction", icon: "🧩", color: "#BD7EBD",
+      brief: "Planning, organising, starting and switching tasks",
+      detail: "Executive function covers the brain's 'management system' — planning ahead, organising tasks, starting things, switching between activities, and keeping track of multiple things. A high challenge here can look like messiness, forgetfulness, or being 'lazy' — when in fact the brain genuinely struggles with these things." },
+  ];
+
+  const profiles = {
+    a: { label: "Child A", color: "#9B7EBD",
+      values: [2, 4, 5, 5, 1, 3, 2, 3],
+      desc: "Strong in Language and Special Interests — possibly very articulate about specific topics they love. High sensory sensitivity means the environment matters a lot. Low need for routine can mean more flexibility than many. Low social communication and emotional regulation mean daily interactions and big feelings are real challenges.",
+    },
+    b: { label: "Child B", color: "#6BA3D6",
+      values: [3, 1, 2, 4, 3, 5, 2, 3],
+      desc: "Great motor skills and strong special interests. Relatively low sensory sensitivity means the physical environment is less of an issue day-to-day. Language is a bigger challenge — needs simpler, visual communication. Emotional regulation and social communication are moderate challenges.",
+    },
+    c: { label: "Child C", color: "#E87A7A",
+      values: [4, 1, 4, 3, 2, 3, 1, 2],
+      desc: "Appears quite socially able and has good language — which can mean their challenges are missed or dismissed. However, low emotional regulation (score 1) means they may hit crisis quickly with little visible build-up. Low sensory sensitivity is helpful, but executive function challenges can make organisation and planning very hard.",
+    },
+    mine: { label: "My Child", color: "#E8875A",
+      values: [3, 3, 3, 3, 3, 3, 3, 3],
+      desc: "Adjust the sliders on the left to build your child's unique profile. Notice how your child's shape is completely their own.",
+    },
+  };
+
+  const cx = 260, cy = 260, maxR = 160, numDims = 8;
+  const labelR = 195;
+  let currentProfile = 'a';
+
+  function angle(i) { return -Math.PI / 2 + (2 * Math.PI * i) / numDims; }
+  function pointOnAxis(i, value, maxVal) {
+    const r = (value / maxVal) * maxR;
+    return { x: cx + r * Math.cos(angle(i)), y: cy + r * Math.sin(angle(i)) };
+  }
+
+  function drawRadar(values, color) {
+    const svg = document.getElementById('radarSvg');
+    svg.innerHTML = '';
+
+    // Background grid circles
+    for (let ring = 1; ring <= 5; ring++) {
+      const r = (ring / 5) * maxR;
+      const pts = dims.map((_, i) => {
+        const a = angle(i);
+        return `${cx + r * Math.cos(a)},${cy + r * Math.sin(a)}`;
+      }).join(' ');
+      const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+      poly.setAttribute('points', pts);
+      poly.setAttribute('fill', 'none');
+      poly.setAttribute('stroke', '#E8E0F0');
+      poly.setAttribute('stroke-width', ring === 5 ? '1.5' : '1');
+      svg.appendChild(poly);
+    }
+
+    // Axis lines
+    dims.forEach((_, i) => {
+      const end = pointOnAxis(i, 5, 5);
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line.setAttribute('x1', cx); line.setAttribute('y1', cy);
+      line.setAttribute('x2', end.x); line.setAttribute('y2', end.y);
+      line.setAttribute('stroke', '#D8D0E8'); line.setAttribute('stroke-width', '1');
+      svg.appendChild(line);
+    });
+
+    // Profile polygon
+    const profilePts = dims.map((_, i) => {
+      const p = pointOnAxis(i, values[i], 5);
+      return `${p.x},${p.y}`;
+    }).join(' ');
+    const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+    poly.setAttribute('points', profilePts);
+    poly.setAttribute('fill', color + '33');
+    poly.setAttribute('stroke', color);
+    poly.setAttribute('stroke-width', '3');
+    poly.setAttribute('stroke-linejoin', 'round');
+    svg.appendChild(poly);
+
+    // Dots on profile
+    dims.forEach((_, i) => {
+      const p = pointOnAxis(i, values[i], 5);
+      const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      c.setAttribute('cx', p.x); c.setAttribute('cy', p.y);
+      c.setAttribute('r', '6');
+      c.setAttribute('fill', color);
+      c.setAttribute('stroke', 'white');
+      c.setAttribute('stroke-width', '2');
+      svg.appendChild(c);
+    });
+
+    // Axis labels
+    dims.forEach((dim, i) => {
+      const a = angle(i);
+      const lx = cx + labelR * Math.cos(a);
+      const ly = cy + labelR * Math.sin(a);
+
+      const lines = dim.shortName.split('\n');
+      const textEl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      textEl.setAttribute('text-anchor', 'middle');
+      textEl.setAttribute('font-family', 'Nunito, sans-serif');
+      textEl.setAttribute('font-weight', '800');
+      textEl.setAttribute('font-size', '11');
+      textEl.setAttribute('fill', dim.color);
+
+      const lineH = 14;
+      const totalH = lines.length * lineH;
+      lines.forEach((line, li) => {
+        const ts = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+        ts.setAttribute('x', lx);
+        const baseY = ly - totalH / 2 + lineH / 2;
+        ts.setAttribute('dy', li === 0 ? `${baseY - ly}px` : `${lineH}px`);
+        ts.textContent = line;
+        textEl.appendChild(ts);
+      });
+
+      // Icon
+      const iconEl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      iconEl.setAttribute('x', lx);
+      const iconOffset = lines.length > 1 ? -totalH/2 - 14 : -18;
+      iconEl.setAttribute('y', ly + iconOffset);
+      iconEl.setAttribute('text-anchor', 'middle');
+      iconEl.setAttribute('font-size', '14');
+      iconEl.textContent = dim.icon;
+      svg.appendChild(iconEl);
+      svg.appendChild(textEl);
+    });
+
+    // Ring labels (1-5)
+    for (let ring = 1; ring <= 5; ring++) {
+      const labelEl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      labelEl.setAttribute('x', cx + 6);
+      labelEl.setAttribute('y', cy - (ring / 5) * maxR - 3);
+      labelEl.setAttribute('font-size', '9');
+      labelEl.setAttribute('fill', '#B0A8C0');
+      labelEl.setAttribute('font-family', 'Nunito, sans-serif');
+      labelEl.setAttribute('font-weight', '700');
+      labelEl.textContent = ring;
+      svg.appendChild(labelEl);
+    }
+  }
+
+  function updateProfileDesc(profileKey) {
+    const p = profiles[profileKey];
+    const desc = document.getElementById('profileDesc');
+    const colors = { a: '#9B7EBD', b: '#6BA3D6', c: '#E87A7A', mine: '#E8875A' };
+    const c = colors[profileKey];
+
+    let barsHtml = dims.map((d, i) => {
+      const val = p.values[i];
+      const pct = (val / 5) * 100;
+      return `<div class="dim-bar">
+        <span class="dim-name">${d.icon} ${d.name.split(' ').slice(0,2).join(' ')}</span>
+        <div class="dim-track"><div class="dim-fill" style="width:${pct}%;background:${d.color}"></div></div>
+        <span class="dim-val">${val}</span>
+      </div>`;
+    }).join('');
+
+    desc.innerHTML = `
+      <h3 style="color:${c}">${p.label}'s Profile</h3>
+      <p class="desc-text">${p.desc}</p>
+      <div class="dim-bars">${barsHtml}</div>
+    `;
+  }
+
+  function buildSliders() {
+    const container = document.getElementById('sliders');
+    container.innerHTML = dims.map((d, i) => `
+      <div class="slider-row">
+        <label>${d.icon} ${d.name.split(' ')[0]}</label>
+        <input type="range" min="0" max="5" step="1" value="${profiles.mine.values[i]}"
+          oninput="updateMineSlider(${i}, this.value)">
+        <span class="sv" id="sv${i}">${profiles.mine.values[i]}</span>
+      </div>
+    `).join('');
+  }
+
+  function updateMineSlider(idx, val) {
+    profiles.mine.values[idx] = parseInt(val);
+    document.getElementById('sv' + idx).textContent = val;
+    if (currentProfile === 'mine') {
+      drawRadar(profiles.mine.values, '#E8875A');
+      updateProfileDesc('mine');
+    }
+  }
+
+  function switchProfile(key, btn) {
+    currentProfile = key;
+    document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    const p = profiles[key];
+    drawRadar(p.values, p.color);
+    updateProfileDesc(key);
+    const sliders = document.getElementById('slidersSection');
+    if (key === 'mine') {
+      sliders.classList.add('visible');
+    } else {
+      sliders.classList.remove('visible');
+    }
+  }
+
+  function buildDimCards() {
+    const container = document.getElementById('dimCards');
+    container.innerHTML = dims.map((d, i) => `
+      <div class="dim-card" style="background:${d.color}18;border-color:${d.color}44" onclick="this.classList.toggle('open')">
+        <div class="dc-icon">${d.icon}</div>
+        <h4 style="color:${d.color}">${d.name}</h4>
+        <p class="dc-brief">${d.brief}</p>
+        <div class="dc-detail">${d.detail}</div>
+        <div class="dc-hint">Tap to learn more ▾</div>
+      </div>
+    `).join('');
+  }
+
+  // Initialise
+  buildSliders();
+  buildDimCards();
+  drawRadar(profiles.a.values, profiles.a.color);
+  updateProfileDesc('a');
+</script>
+</body>
+</html>
