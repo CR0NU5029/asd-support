@@ -246,9 +246,34 @@
 
     @keyframes fadeIn { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform: translateY(0); } }
     footer { text-align:center; padding:24px; font-size:13px; color:var(--subtext); background:var(--cream); }
+
+    /* TOP NAV */
+    .top-nav {
+      position: sticky; top: 0; z-index: 1000;
+      background: rgba(253,246,238,0.96);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 2px solid rgba(155,126,189,0.15);
+      padding: 10px 20px;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .home-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: white; border: 2px solid #E0D8E8; border-radius: 10px;
+      padding: 7px 16px; font-family: inherit; font-size: 14px; font-weight: 800;
+      color: #3D3440; text-decoration: none; transition: all 0.2s;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+    .home-btn:hover { background: #9B7EBD; border-color: #9B7EBD; color: white; transform: translateY(-1px); }
+    .nav-title { font-size: 14px; font-weight: 700; color: var(--subtext); }
   </style>
 </head>
 <body>
+
+<nav class="top-nav">
+  <a href="index.html" class="home-btn">🏠 Home</a>
+  <span class="nav-title">Understanding the Spectrum – The Spikey Profile</span>
+</nav>
 
 <div class="hero">
   <div class="hero-icon">🌟</div>
