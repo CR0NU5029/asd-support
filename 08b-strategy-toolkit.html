@@ -1,0 +1,1421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Strategy Toolkit – In Depth | ASD Support Pack</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #FDF6EE;
+      --purple: #9B7EBD; --purple-light: #F4EEFB; --purple-mid: #E8DAFF;
+      --blue: #6BA3D6;   --blue-light: #EFF5FC;
+      --teal: #5BB8AC;   --teal-light: #EAF7F5;
+      --orange: #E8875A; --orange-light: #FFF0E8;
+      --green: #6BBF7B;  --green-light: #EDF7F0;
+      --coral: #E87A7A;  --coral-light: #FFF0F2;
+      --yellow: #F5CE5A; --yellow-light: #FFFBEA;
+      --text: #3D3440;   --subtext: #7A6E7F;
+    }
+
+    body { font-family: 'Nunito', system-ui, sans-serif; background: var(--cream); color: var(--text); line-height: 1.65; }
+
+    /* TOP NAV */
+    .top-nav {
+      position: sticky; top: 0; z-index: 1000;
+      background: rgba(253,246,238,0.96); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      border-bottom: 2px solid rgba(155,126,189,0.15);
+      padding: 10px 20px; display: flex; align-items: center; gap: 14px;
+    }
+    .home-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: white; border: 2px solid #E0D8E8; border-radius: 10px;
+      padding: 7px 16px; font-family: inherit; font-size: 14px; font-weight: 800;
+      color: var(--text); text-decoration: none; transition: all 0.2s;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+    .home-btn:hover { background: var(--purple); border-color: var(--purple); color: white; transform: translateY(-1px); }
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--purple-light); border: 2px solid var(--purple); border-radius: 10px;
+      padding: 7px 16px; font-family: inherit; font-size: 14px; font-weight: 800;
+      color: var(--purple); text-decoration: none; transition: all 0.2s;
+    }
+    .back-btn:hover { background: var(--purple); color: white; transform: translateY(-1px); }
+    .nav-title { font-size: 14px; font-weight: 700; color: var(--subtext); }
+
+    /* HERO */
+    .hero {
+      background: linear-gradient(135deg, #9B7EBD 0%, #6BA3D6 100%);
+      color: white; padding: 52px 24px 44px; text-align: center;
+    }
+    .hero-icon { font-size: 52px; margin-bottom: 12px; display: block; }
+    .hero h1 { font-size: clamp(26px, 5vw, 42px); font-weight: 900; margin-bottom: 10px; line-height: 1.15; }
+    .hero p { font-size: 17px; opacity: 0.92; max-width: 660px; margin: 0 auto; }
+
+    /* CATEGORY NAV */
+    .cat-nav {
+      background: white; border-bottom: 3px solid #F0E8FA;
+      position: sticky; top: 55px; z-index: 900;
+    }
+    .cat-nav-inner {
+      max-width: 1060px; margin: 0 auto;
+      display: flex; overflow-x: auto; gap: 0;
+      scrollbar-width: none;
+    }
+    .cat-nav-inner::-webkit-scrollbar { display: none; }
+    .cat-link {
+      flex-shrink: 0; padding: 14px 20px;
+      font-family: inherit; font-size: 13.5px; font-weight: 800;
+      color: var(--subtext); background: none; border: none;
+      border-bottom: 3px solid transparent; margin-bottom: -3px;
+      cursor: pointer; text-decoration: none; transition: all 0.2s;
+      white-space: nowrap; display: flex; align-items: center; gap: 6px;
+    }
+    .cat-link:hover { color: var(--purple); border-bottom-color: var(--purple); }
+    .cat-link.active { color: var(--purple); border-bottom-color: var(--purple); }
+
+    /* CATEGORY SECTION */
+    .cat-section { padding: 52px 20px 16px; max-width: 1060px; margin: 0 auto; }
+    .cat-section h2 {
+      font-size: clamp(22px, 3.5vw, 30px); font-weight: 900;
+      display: flex; align-items: center; gap: 12px; margin-bottom: 6px;
+    }
+    .cat-section .cat-intro { font-size: 15px; color: var(--subtext); margin-bottom: 36px; max-width: 700px; }
+    .cat-divider { height: 4px; border-radius: 2px; margin-bottom: 36px; max-width: 80px; }
+
+    /* STRATEGY CARDS */
+    .strategy-stack { display: flex; flex-direction: column; gap: 28px; }
+
+    .strat-card {
+      background: white; border-radius: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+      overflow: hidden;
+    }
+    .strat-card-header {
+      padding: 24px 28px 20px;
+      display: flex; align-items: flex-start; gap: 16px;
+      border-bottom: 2px solid #F5F0FA;
+    }
+    .strat-icon {
+      width: 52px; height: 52px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px; flex-shrink: 0;
+    }
+    .strat-header-text h3 { font-size: 20px; font-weight: 900; margin-bottom: 4px; }
+    .strat-header-text .strat-tagline { font-size: 14px; color: var(--subtext); }
+
+    .strat-body { padding: 24px 28px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    @media (max-width: 700px) { .strat-body { grid-template-columns: 1fr; } }
+    .strat-body.full-width { grid-template-columns: 1fr; }
+    .strat-body.three-col { grid-template-columns: 1fr 1fr 1fr; }
+    @media (max-width: 900px) { .strat-body.three-col { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 600px) { .strat-body.three-col { grid-template-columns: 1fr; } }
+
+    /* CONTENT BLOCKS */
+    .why-block {
+      background: var(--yellow-light); border-left: 4px solid var(--yellow);
+      border-radius: 12px; padding: 16px 18px;
+    }
+    .why-block h4 { font-size: 13px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.8px; color: #8A7000; margin-bottom: 8px; }
+    .why-block p { font-size: 14px; color: var(--text); }
+
+    .how-block { }
+    .how-block h4 { font-size: 13px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.8px; color: var(--subtext); margin-bottom: 12px; }
+    .how-list { list-style: none; padding: 0; }
+    .how-list li {
+      font-size: 14px; color: var(--text); padding: 9px 12px 9px 36px;
+      position: relative; border-radius: 8px; margin-bottom: 5px;
+      background: #FAFAFA;
+    }
+    .how-list li::before {
+      content: attr(data-n);
+      position: absolute; left: 10px; top: 9px;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: var(--purple); color: white;
+      font-size: 11px; font-weight: 900;
+      display: flex; align-items: center; justify-content: center;
+      line-height: 1;
+    }
+
+    .practice-block {
+      background: var(--teal-light); border-left: 4px solid var(--teal);
+      border-radius: 12px; padding: 18px 20px;
+    }
+    .practice-block h4 { font-size: 13px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.8px; color: #1A7A6E; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+    .practice-block p { font-size: 14px; color: var(--text); font-style: italic; }
+
+    .watchout-block {
+      background: var(--coral-light); border-left: 4px solid var(--coral);
+      border-radius: 12px; padding: 14px 18px;
+      display: flex; gap: 10px; align-items: flex-start;
+    }
+    .watchout-block .wo-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+    .watchout-block p { font-size: 13.5px; color: var(--text); }
+    .watchout-block strong { color: #A03040; }
+
+    .tip-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .tip-chip {
+      background: var(--purple-light); color: var(--purple);
+      border-radius: 20px; padding: 5px 14px; font-size: 13px; font-weight: 700;
+      border: 1.5px solid var(--purple-mid);
+    }
+
+    .resource-block {
+      background: var(--blue-light); border-left: 4px solid var(--blue);
+      border-radius: 12px; padding: 14px 18px;
+    }
+    .resource-block h4 { font-size: 13px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.8px; color: #1A4A80; margin-bottom: 8px; }
+    .resource-block ul { list-style: none; padding: 0; }
+    .resource-block li { font-size: 13.5px; color: var(--text); padding: 4px 0; display: flex; align-items: center; gap: 6px; }
+    .resource-block li::before { content: "→"; color: var(--blue); font-weight: 800; }
+
+    .what-not-block {
+      background: #FFF8F0; border-left: 4px solid var(--orange);
+      border-radius: 12px; padding: 14px 18px;
+    }
+    .what-not-block h4 { font-size: 13px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.8px; color: #8A4010; margin-bottom: 10px; }
+    .what-not-block ul { list-style: none; padding: 0; }
+    .what-not-block li { font-size: 13.5px; color: var(--text); padding: 5px 0 5px 20px; position: relative; }
+    .what-not-block li::before { content: "✗"; position: absolute; left: 0; color: var(--orange); font-weight: 900; }
+
+    .type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media (max-width: 500px) { .type-grid { grid-template-columns: 1fr; } }
+    .type-item { background: #FAFAFA; border-radius: 10px; padding: 12px 14px; }
+    .type-item .ti-label { font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; color: var(--subtext); margin-bottom: 4px; }
+    .type-item p { font-size: 13px; color: var(--text); }
+
+    .zone-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media (max-width: 500px) { .zone-grid { grid-template-columns: 1fr; } }
+    .zone-card { border-radius: 12px; padding: 14px; }
+    .zone-card.blue  { background: #DCF0FA; border-left: 4px solid #5AAAD6; }
+    .zone-card.green { background: #DCFAE0; border-left: 4px solid #45B55A; }
+    .zone-card.yellow{ background: #FAF5DC; border-left: 4px solid #D6B020; }
+    .zone-card.red   { background: #FAE0DC; border-left: 4px solid #D64520; }
+    .zone-card .zc-name { font-size: 15px; font-weight: 900; margin-bottom: 4px; }
+    .zone-card .zc-desc { font-size: 13px; color: var(--text); }
+
+    /* Technique cards for breathing */
+    .technique-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; }
+    .tech-card { background: var(--purple-light); border-radius: 12px; padding: 14px; text-align: center; }
+    .tech-card .tc-icon { font-size: 28px; margin-bottom: 8px; }
+    .tech-card h5 { font-size: 13px; font-weight: 900; margin-bottom: 4px; color: var(--purple); }
+    .tech-card p { font-size: 12.5px; color: var(--subtext); }
+
+    /* SECTION SPACER */
+    .section-end { height: 48px; }
+
+    /* FOOTER */
+    footer { text-align: center; padding: 28px 20px; font-size: 13px; color: var(--subtext); background: white; border-top: 2px solid #F0E8FA; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Section colour theming */
+    .sec-env .strat-icon     { background: var(--teal-light); }
+    .sec-env .cat-divider    { background: linear-gradient(90deg, var(--teal), var(--blue)); }
+    .sec-env .how-list li::before { background: var(--teal); }
+    .sec-env .tip-chip       { background: var(--teal-light); color: #1A7A6E; border-color: #9ADDD8; }
+
+    .sec-comm .strat-icon    { background: var(--blue-light); }
+    .sec-comm .cat-divider   { background: linear-gradient(90deg, var(--blue), var(--purple)); }
+    .sec-comm .how-list li::before { background: var(--blue); }
+    .sec-comm .tip-chip      { background: var(--blue-light); color: #1A4A80; border-color: #A8C8EC; }
+
+    .sec-emotion .strat-icon { background: var(--orange-light); }
+    .sec-emotion .cat-divider{ background: linear-gradient(90deg, var(--orange), var(--yellow)); }
+    .sec-emotion .how-list li::before { background: var(--orange); }
+    .sec-emotion .tip-chip   { background: var(--orange-light); color: #8A4010; border-color: #F0C09A; }
+
+    .sec-positive .strat-icon{ background: var(--green-light); }
+    .sec-positive .cat-divider{ background: linear-gradient(90deg, var(--green), var(--teal)); }
+    .sec-positive .how-list li::before { background: var(--green); }
+    .sec-positive .tip-chip  { background: var(--green-light); color: #2A6A35; border-color: #A8D8B0; }
+
+    .sec-moment .strat-icon  { background: var(--purple-light); }
+    .sec-moment .cat-divider { background: linear-gradient(90deg, var(--purple), var(--coral)); }
+    .sec-moment .how-list li::before { background: var(--purple); }
+    .sec-moment .tip-chip    { background: var(--purple-light); color: #5A3080; border-color: #CEB8E8; }
+  </style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="top-nav">
+  <a href="index.html" class="home-btn">🏠 Home</a>
+  <a href="08-understanding-behaviour.html" class="back-btn">← Back to Behaviour Guide</a>
+  <span class="nav-title">Strategy Toolkit – In Depth</span>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <span class="hero-icon">🛠️</span>
+  <h1>Strategy Toolkit — In Depth</h1>
+  <p>A detailed, practical guide to every strategy — with the reasoning behind each one, clear how-to steps, and real examples from family life.</p>
+</div>
+
+<!-- CATEGORY NAV -->
+<div class="cat-nav">
+  <div class="cat-nav-inner">
+    <a class="cat-link" href="#environment">🏠 Environment</a>
+    <a class="cat-link" href="#communication">💬 Communication</a>
+    <a class="cat-link" href="#emotions">❤️ Managing Emotions</a>
+    <a class="cat-link" href="#positive">✅ Positive Behaviour</a>
+    <a class="cat-link" href="#moment">⚡ In the Moment</a>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════ -->
+<!-- SECTION 1: ENVIRONMENT                     -->
+<!-- ══════════════════════════════════════════ -->
+<div id="environment" class="cat-section sec-env">
+  <h2>🏠 Environment</h2>
+  <div class="cat-divider"></div>
+  <p class="cat-intro">The environment is one of the most powerful — and most overlooked — tools available to parents. Small physical changes can dramatically reduce the anxiety and sensory load that underlie so much difficult behaviour.</p>
+
+  <div class="strategy-stack">
+
+    <!-- CALM SPACE -->
+    <div class="strat-card">
+      <div class="strat-card-header">
+        <div class="strat-icon">🛋️</div>
+        <div class="strat-header-text">
+          <h3>Creating a Calm Space</h3>
+          <p class="strat-tagline">A designated low-stimulus area your child can go to proactively — not as punishment, but as a self-regulation tool.</p>
+        </div>
+      </div>
+      <div class="strat-body">
+        <div>
+          <div class="why-block">
+            <h4>💡 Why it works</h4>
+            <p>Autistic children often have limited capacity to self-regulate when overwhelmed. A physically predictable, low-stimulus space reduces the sensory load and gives the nervous system a chance to reset — without the added demand of social interaction.</p>
+          </div>
+          <br>
+          <div class="how-block">
+            <h4>How to set one up</h4>
+            <ol class="how-list">
+              <li data-n="1">Choose a dedicated corner or area — not a bedroom if you want to avoid sleep associations</li>
+              <li data-n="2">Keep it low-stimulus: soft lighting (fairy lights on a dimmer), soft textures, minimal clutter</li>
+              <li data-n="3">Add calming tools the child finds helpful: weighted blanket, noise-cancelling headphones, fidget items</li>
+              <li data-n="4">Make it available at all times — not locked behind "earning" it</li>
+              <li data-n="5">Introduce it when calm: "This is YOUR special space, whenever you need it"</li>
+              <li data-n="6">Model using it yourself: "I'm feeling a bit stressed — I'm going to sit in the calm corner for a few minutes"</li>
+            </ol>
+          </div>
+        </div>
+        <div>
+          <div class="practice-block">
+            <h4>🌿 In practice</h4>
+            <p>Jake (age 8) used to escalate quickly at homework time. His parents set up a beanbag corner with a dimmer lamp and a small box of fidget tools. They started offering "5 minutes in your corner before homework?" as a buffer. Meltdowns at homework time dropped significantly within two weeks — the space became a reset rather than a reaction.</p>
+          </div>
+          <br>
+          <div class="watchout-block">
+            <span class="wo-icon">⚠️</span>
+            <p><strong>Watch out:</strong> Never use the calm space as a consequence — "go to your corner" said in an angry tone completely destroys its purpose. The space only works if it has zero negative associations. It's a resource, not a punishment.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VISUAL TIMETABLES -->
+    <div class="strat-card">
+      <div class="strat-card-header">
+        <div class="strat-icon">📅</div>
+        <div class="strat-header-text">
+          <h3>Visual Timetables</h3>
+          <p class="strat-tagline">A physical or digital display showing the sequence of the day using pictures, symbols or words — making the invisible structure of time visible and concrete.</p>
+        </div>
+      </div>
+      <div class="strat-body">
+        <div>
+          <div class="why-block">
+            <h4>💡 Why it works</h4>
+            <p>Uncertainty about what's coming next is a major driver of anxiety in autistic children. The brain is constantly scanning for threats — a visual schedule removes that uncertainty and gives the nervous system something concrete and predictable to hold on to. It also reduces the number of verbal reminders needed, lowering demand pressure.</p>
+          </div>
+          <br>
+          <div class="how-block">
+            <h4>How to create and use one</h4>
+            <ol class="how-list">
+              <li data-n="1">Start with the most difficult parts of the day: mornings, after-school, bedtime routines</li>
+              <li data-n="2">Match the format to your child: photos for younger children, symbols for school age, words for older children</li>
+              <li data-n="3">Add a "now" indicator — velcro arrow, a peg — so they always know where they are in the sequence</li>
+              <li data-n="4">Include preferred activities and downtime — it shouldn't be all demands</li>
+              <li data-n="5">Build it <em>with</em> your child: take the photos together, let them choose symbols. Ownership matters.</li>
+              <li data-n="6">Review it together each morning: "Let's look at what we've got today"</li>
+            </ol>
+          </div>
+          <div class="resource-block" style="margin-top:14px;">
+            <h4>📱 Free tools</h4>
+            <ul>
+              <li>Widgit Online — symbol-based timetables</li>
+              <li>Choiceworks App — visual schedules &amp; timers</li>
+              <li>Do2Learn — free printable visual resources</li>
+              <li>Boardmaker — professional symbols library</li>
+            </ul>
+          </div>
+        </div>
+        <div>
+          <div class="practice-block">
+            <h4>🌿 In practice</h4>
+            <p>Every morning Mia (age 6) would melt down about getting dressed. Her mum made a photo timetable with velcro pictures: Wake Up → Toilet → Wash Hands → Get Dressed → Breakfast → Brush Teeth → Bag Check → Car. Mia moved the photos herself as she completed each step. Mornings went from 45-minute battles to 20-minute routines within two weeks.</p>
+          </div>
+          <br>
+          <div class="watchout-block">
+            <span class="wo-icon">⚠️</span>
+            <p><strong>Watch out:</strong> Always update the timetable when things change — even changes that seem minor to you. A sudden deviation from a schedule can cause as much distress as the original unpredictability. A "change card" (a question mark symbol) can signal that today is different, which is better than no warning at all.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRANSITION WARNINGS -->
+    <div class="strat-card">
+      <div class="strat-card-header">
+        <div class="strat-icon">⏱️</div>
+        <div class="strat-header-text">
+          <h3>Transition Warnings</h3>
+          <p class="strat-tagline">Clear, structured advance notice before any change of activity or environment — making transitions predictable and giving the brain time to shift.</p>
+        </div>
+      </div>
+      <div class="strat-body">
+        <div>
+          <div class="why-block">
+            <h4>💡 Why it works</h4>
+            <p>Transitions are genuinely demanding — they require stopping something absorbing, shifting mental context, and tolerating uncertainty about what's next. Abrupt transitions remove any sense of control. Warnings allow the brain to begin preparing rather than being ambushed.</p>
+          </div>
+          <br>
+          <div class="how-block">
+            <h4>How to use transition warnings</h4>
+            <ol class="how-list">
+              <li data-n="1">Give a 10-minute warning, then 5-minute, then 2-minute, then "time now"</li>
+              <li data-n="2">Pair verbal warnings with a <em>visual timer</em> — a Time Timer, sand timer, or countdown app makes abstract time concrete</li>
+              <li data-n="3">Use consistent, simple language every time: "In 5 minutes we're finishing the iPad and having dinner"</li>
+              <li data-n="4">Never say "in a minute" or "nearly time" — these are meaningless to a brain that processes time differently</li>
+              <li data-n="5">Acknowledge the transition: "I know it's hard to stop when you're in the middle of something"</li>
+              <li data-n="6">Honour your warning — if you give a 5-minute warning, follow through. Trust depends on consistency.</li>
+            </ol>
+          </div>
+        </div>
+        <div>
+          <div class="practice-block">
+            <h4>🌿 In practice</h4>
+            <p>Tom's parents used to say "Come on, time to go!" and were shocked by the explosion that followed. They introduced a visual sand timer alongside a verbal 5-minute warning. Tom now checks the timer himself and says "two more minutes" on his own initiative. Leaving the house went from a daily flashpoint to manageable — not easy, but manageable.</p>
+          </div>
+          <br>
+          <div class="watchout-block">
+            <span class="wo-icon">⚠️</span>
+            <p><strong>For PDA profiles:</strong> Direct countdowns can sometimes <em>increase</em> anxiety rather than reduce it, as they can feel like mounting pressure. Try a softer framing: "The timer's nearly done — we might want to start thinking about finishing up" — offering awareness rather than a deadline.</p>
+          </div>
+          <div class="tip-chips" style="margin-top:14px;">
+            <span class="tip-chip">⏲️ Time Timer app</span>
+            <span class="tip-chip">🏖️ Sand timers (visual)</span>
+            <span class="tip-chip">🎵 Transition song</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MANAGING UNEXPECTED CHANGES -->
+    <div class="strat-card">
+      <div class="strat-card-header">
+        <div class="strat-icon">🔀</div>
+        <div class="strat-header-text">
+          <h3>Managing Unexpected Changes</h3>
+          <p class="strat-tagline">Proactive strategies to prepare your child for deviations from routine — because the goal isn't to eliminate change, it's to make it survivable.</p>
+        </div>
+      </div>
+      <div class="strat-body">
+        <div>
+          <div class="why-block">
+            <h4>💡 Why it works</h4>
+            <p>For autistic children, routine isn't preference — it's safety. The nervous system experiences unexpected change as a genuine threat. The goal isn't to eliminate change (impossible) but to give the brain enough preparation to tolerate it. Preparation turns the unknown into the known.</p>
+          </div>
+          <br>
+          <div class="how-block">
+            <h4>How to prepare for change</h4>
+            <ol class="how-list">
+              <li data-n="1">Prepare as far ahead as possible: "On Friday we're going to a different park, not our usual one"</li>
+              <li data-n="2">Use a "change card" in the visual timetable — a question mark symbol or "surprise" picture prepares without specifics</li>
+              <li data-n="3">Write a Social Story about the upcoming change (see Communication section)</li>
+              <li data-n="4">Practise flexibility in small, safe ways — different route to school, different TV show to start with — to gently build a flexibility "muscle"</li>
+              <li data-n="5">Validate the distress: "I know this isn't what you expected — that's really hard"</li>
+              <li data-n="6">Offer control within the change: "We're having a different dinner tonight — do you want pasta or rice?"</li>
+            </ol>
+          </div>
+        </div>
+        <div>
+          <div class="practice-block">
+            <h4>🌿 In practice</h4>
+            <p>Every supply teacher would set Emma (age 9) off on a very difficult day. Her parents worked with the school to add a "supply teacher card" to Emma's visual schedule whenever one was known in advance, with a brief Social Story: "Sometimes my teacher is away. A new teacher follows the same rules. I can always ask my TA for help."</p>
+          </div>
+          <br>
+          <div class="watchout-block">
+            <span class="wo-icon">⚠️</span>
+            <p><strong>Never say "it'll be fine" or "don't worry about it."</strong> These invalidate real distress and don't teach any coping skills. The formula that works: acknowledge ("I know this is hard") + prepare ("here's what's happening") + give control ("you choose X or Y").</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end strategy-stack -->
+</div><!-- end sec-env -->
+<div class="section-end"></div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- SECTION 2: COMMUNICATION                   -->
+<!-- ══════════════════════════════════════════ -->
+<div id="communication" class="cat-section sec-comm">
+  <h2>💬 Communication</h2>
+  <div class="cat-divider"></div>
+  <p class="cat-intro">Communication strategies aren't just about talking — they're about reducing the processing load, building bridges between what a child feels and what they can express, and making communication as accessible as possible under stress.</p>
+
+  <div class="strategy-stack">
+
+    <!-- SIMPLIFIED LANGUAGE -->
+    <div class="strat-card">
+      <div class="strat-card-header">
+        <div class="strat-icon">🗣️</div>
+        <div class="strat-header-text">
+          <h3>Simplified Language &amp; the 10-Second Rule</h3>
+          <p class="strat-tagline">Short, concrete, one-thing-at-a-time language — combined with genuine waiting time for processing. This one change can transform daily interactions.</p>
+        </div>
+      </div>
+      <div class="strat-body">
+        <div>
+          <div class="why-block">
+            <h4>💡 Why it works</h4>
+            <p>Auditory processing differences mean many autistic children need significantly longer to decode verbal language. Giving an instruction and then immediately repeating it, elaborating, or escalating adds to the processing load rather than helping. The 10-second rule is evidence-based and often astonishingly effective.</p>
+          </div>
+          <br>
+          <div class="how-block">
+            <h4>How to simplify communication</h4>
+            <ol class="how-list">
+              <li data-n="1">Use short sentences: one instruction at a time. "Shoes on" rather than "Can you put your shoes on because we need to leave soon"</li>
+              <li data-n="2">Give the instruction, then silently count to 10. Most parents find compliance arrives during that silence.</li>
+              <li data-n="3">Frame positively: say what you want them TO do — "walking feet" not "stop running"</li>
+              <li data-n="4">Avoid rhetorical questions: "Why did you do that?" creates shame, not reflection. Try "Let's think about what happened" later, when calm.</li>
+              <li data-n="5">When anxious or distressed, reduce verbal input to almost nothing — the brain cannot process language well in fight-or-flight</li>
+              <li data-n="6">For older children: write it down. A brief note is often processed far more effectively than spoken words.</li>
+            </ol>
+          </div>
+        </div>
+        <div>
+          <div class="practice-block">
+            <h4>🌿 In practice</h4>
+            <p>Liam's dad would ask a stream of questions after school: "How was your day? What did you have for lunch? Did you see your friend? Do you have homework?" Liam would shut down completely. His dad now gives 20 minutes of completely quiet time first. Information started coming naturally after that buffer — and the relationship genuinely improved.</p>
+          </div>
+          <br>
+          <div class="watchout-block">
+            <span class="wo-icon">⚠️</span>
+            <p><strong>The processing delay is neurological, not defiance.</strong> Repeating an instruction before they've processed the first one adds to the load rather than reducing it. Resist the urge to prompt — the silence is doing important work.</p>
+          </div>
+          <div class="tip-chips" style="margin-top:14px;">
+            <span class="tip-chip">🚫 Avoid sarcasm &amp; idioms</span>
+            <span class="tip-chip">✍️ Write it instead</span>
+            <span class="tip-chip">⬇️ Less is more under stress</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FIRST-THEN BOARDS -->
+    <div class="strat-card">
+      <div class="strat-card-header">
+        <div class="strat-icon">➡️</div>
+        <div class="strat-header-text">
+          <h3>First–Then Boards</h3>
+          <p class="strat-tagline">A two-part visual showing what comes first (often a less preferred task) and what comes after (something enjoyable) — removing the need for verbal negotiation.</p>
+        </div>
+      </div>
+      <div class="strat-body">
+        <div>
+          <div class="why-block">
+            <h4>💡 Why it works</h4>
+            <p>Autistic children often struggle to hold abstract future rewards in mind. A First-Then board makes the connection concrete and visual. It also removes the power struggle that often escalates under stress — the information is on the board, not coming from a parent, so it feels less confrontational.</p>
+          </div>
+          <br>
+          <div class="how-block">
+            <h4>How to use First–Then boards</h4>
+            <ol class="how-list">
+              <li data-n="1">Keep it simple: two pictures side by side — "First: [shoes on]" and "Then: [tablet]"</li>
+              <li data-n="2">Use actual photos or symbols the child recognises clearly</li>
+              <li data-n="3">Make it portable: laminated card, whiteboard, or an app</li>
+              <li data-n="4">Always honour the "then" completely. If you say tablet, it must be tablet. Trust is the entire foundation.</li>
+              <li data-n="5">Let the child choose the "then" from a pre-agreed menu — it must be genuinely motivating to them</li>
+              <li data-n="6">Don't overuse it — keep it for high-demand moments, transitions and difficult tasks</li>
+            </ol>
+          </div>
+          <div class="resource-block" style="margin-top:14px;">
+            <h4>📱 Useful apps</h4>
+            <ul>
+              <li>First Then Visual Schedule (app)</li>
+              <li>ChoiceWorks</li>
+              <li>Laminated card kept on the fridge</li>
+            </ul>
+          </div>
+        </div>
+        <div>
+          <div class="practice-block">
+            <h4>🌿 In practice</h4>
+            <p>Getting eight-year-old Noah dressed every morning was a battle. His mum started using a First-Then board: "First: dressed. Then: cartoons." She said nothing and pointed to the board. Within two weeks Noah was dressing himself without prompting and going to check the board himself.</p>
+          </div>
+          <br>
+          <div class="watchout-block">
+            <span class="wo-icon">⚠️</span>
+            <p><strong>Tone matters significantly here.</strong> This is not "IF you get dressed THEN you can watch TV" (which sounds like a conditional threat). Present it neutrally and informatively — "here's what's happening" — not as a bargain you might withdraw.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VISUAL SUPPORTS & SYMBOL CARDS -->
+    <div class="strat-card">
+      <div class="strat-card-header">
+        <div class="strat-icon">🃏</div>
+        <div class="strat-header-text">
+          <h3>Visual Supports &amp; Communication Cards</h3>
+          <p class="strat-tagline">Physical cards or pictures your child can use to communicate needs when words aren't accessible — a lifeline during moments of overwhelm.</p>
+        </div>
+      </div>
+      <div class="strat-body">
+        <div>
+          <div class="why-block">
+            <h4>💡 Why it works</h4>
+            <p>Verbal language is often the first thing to go under stress. Many autistic children — even those with strong verbal ability — lose access to spoken language when overwhelmed. A physical card to hand over removes that barrier entirely, preserves dignity, and gives the child agency at exactly the moment they need it most.</p>
+          </div>
+          <br>
+          <div class="how-block">
+            <h4>How to create and introduce them</h4>
+            <ol class="how-list">
+              <li data-n="1">Create cards for your child's most common needs: "I need a break", "I feel overwhelmed", "I don't understand", "I need quiet", "I'm hungry"</li>
+              <li data-n="2">Laminate and attach to a keyring or keep on a small lanyard — easily accessible</li>
+              <li data-n="3">Practise using them when calm, not in crisis: "If you ever feel [emotion], you can hand me this card"</li>
+              <li data-n="4">Model using them: hand the card to your child, have them hand it back — make it a familiar action</li>
+              <li data-n="5">Respond immediately and without fuss when a card is used — calm acknowledgement reinforces the system</li>
+              <li data-n="6">Work with school so the same cards work in both environments — consistency is key</li>
+            </ol>
+          </div>
+        </div>
+        <div>
+          <div class="practice-block">
+            <h4>🌿 In practice</h4>
+            <p>Grace (age 9) was becoming physically aggressive in class when overwhelmed but couldn't articulate why. Her parents and SENCO introduced a yellow "break card". Grace could hand it to the teacher at any time and would be immediately guided — no questions asked — to the calm area for 5 minutes. Incidents dropped by around 75% in the first month alone.</p>
+          </div>
+          <br>
+          <div class="watchout-block">
+            <span class="wo-icon">⚠️</span>
+            <p><strong>The system only works if adults respond reliably every time.</strong> Even one rejection of the card — "not right now, you're in the middle of an activity" — can break trust in the whole system. When the card comes out, the answer is always yes.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SOCIAL STORIES -->
+    <div class="strat-card">
+      <div class="strat-card-header">
+        <div class="strat-icon">📖</div>
+        <div class="strat-header-text">
+          <h3>Social Stories</h3>
+          <p class="strat-tagline">Short, personalised stories written from your child's perspective that describe a situation, what to expect, and what to do — reducing anxiety before it starts.</p>
+        </div>
+      </div>
+      <div class="strat-body">
+        <div>
+          <div class="why-block">
+            <h4>💡 Why it works</h4>
+            <p>Developed by Carol Gray in the 1990s, Social Stories reduce anxiety by giving a concrete, narrative "script" for situations the child finds confusing or frightening. They gently build perspective-taking without pressure, and the repetition of reading them creates predictability and familiarity around the target situation.</p>
+          </div>
+          <br>
+          <div class="how-block">
+            <h4>How to write a Social Story</h4>
+            <ol class="how-list">
+              <li data-n="1">Identify the situation: haircuts, hospital appointments, fire drills, supply teachers, birthday parties</li>
+              <li data-n="2">Write in first person ("I"), present or future tense, short sentences</li>
+              <li data-n="3">Use Carol Gray's ratio: mostly descriptive + perspective sentences, with only 1 directive per every 4–5 others</li>
+              <li data-n="4">Keep it short: 5–10 sentences for younger children, more for older</li>
+              <li data-n="5">Add illustrations — photos, simple drawings, or symbols that your child recognises</li>
+              <li data-n="6">Read together several days before the event, then again the day before and morning of. Revisit after to reflect on what happened.</li>
+            </ol>
+          </div>
+        </div>
+        <div>
+          <div class="practice-block">
+            <h4>🌿 Example story (fire drill)</h4>
+            <p>"Sometimes our school has a fire drill. The fire alarm is very loud — it might feel startling. When the alarm goes off, my teacher will say 'line up'. We walk outside together to the playground. We wait until a teacher says it is safe to go back in. Fire drills help keep us safe. I have done this before and I can do it again."</p>
+          </div>
+          <br>
+          <div class="watchout-block">
+            <span class="wo-icon">⚠️</span>
+            <p><strong>Never write Social Stories as a scolding.</strong> "I should not hit my sister" is not a Social Story — it's a telling-off in narrative form. Stories should describe situations with warmth and give the child information and options, never shame.</p>
+          </div>
+          <div class="resource-block" style="margin-top:14px;">
+            <h4>📚 Resources</h4>
+            <ul>
+              <li>"The New Social Story Book" — Carol Gray</li>
+              <li>Carol Gray Social Stories website</li>
+              <li>Social Story Creator apps</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EMOTIONAL VOCABULARY -->
+    <div class="strat-card">
+      <div class="strat-card-header">
+        <div class="strat-icon">❤️</div>
+        <div class="strat-header-text">
+          <h3>Building Emotional Vocabulary</h3>
+          <p class="strat-tagline">Deliberately teaching children to identify, name and understand emotions — giving them a map for their inner world, and words to express it.</p>
+        </div>
+      </div>
+      <div class="strat-body">
+        <div>
+          <div class="why-block">
+            <h4>💡 Why it works</h4>
+            <p>Many autistic people experience alexithymia — a genuine difficulty identifying their own internal emotional states. They may feel something intensely but lack the language to describe it, leading to behaviour that seems "out of nowhere". Building emotional vocabulary gives the brain a framework to work with, and reduces the likelihood that unexpressed emotion becomes expressed as behaviour.</p>
+          </div>
+          <br>
+          <div class="how-block">
+            <h4>How to build emotional vocabulary</h4>
+            <ol class="how-list">
+              <li data-n="1">Model it constantly — narrate your own emotions in everyday situations: "I'm feeling a bit tired and stressed today, that's why I'm quiet"</li>
+              <li data-n="2">Use books and films: "How do you think that character is feeling? What does their face tell us?"</li>
+              <li data-n="3">Try body-based learning: "Your jaw is tight and your fists are clenched — I wonder what emotion that might be?" — this builds body awareness alongside vocabulary</li>
+              <li data-n="4">Avoid quizzing during stress: "How do you feel?" is unanswerable when overwhelmed. Use observation instead: "I notice your shoulders are really tense"</li>
+              <li data-n="5">Use an emotion scale for calm check-ins — not just crisis moments</li>
+              <li data-n="6">Always validate before redirecting: name what you see before suggesting how to change it</li>
+            </ol>
+          </div>
+        </div>
+        <div>
+          <div class="practice-block">
+            <h4>🌿 In practice</h4>
+            <p>Alfie (age 8) would hit when things went wrong but couldn't say why. His parents started narrating emotions during everyday life and watching Pixar's "Inside Out" together, using it as a jumping-off point for conversations. Within three months, Alfie began saying "I'm in the red zone" — which gave his parents enough warning to respond before hitting occurred.</p>
+          </div>
+          <br>
+          <div class="resource-block">
+            <h4>📚 Excellent resources</h4>
+            <ul>
+              <li>"Inside Out" (film) — brilliant conversation starter</li>
+              <li>Zones of Regulation materials</li>
+              <li>"The Whole-Brain Child" — Siegel &amp; Bryson</li>
+              <li>Emotion flashcard sets</li>
+            </ul>
+          </div>
+          <br>
+          <div class="watchout-block">
+            <span class="wo-icon">⚠️</span>
+            <p><strong>Don't push for emotional disclosure.</strong> Some autistic people process emotions differently and in their own time. Build the vocabulary passively as much as actively — the goal is availability of language, not performance of emotional openness.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<div class="section-end"></div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- SECTION 3: MANAGING EMOTIONS               -->
+<!-- ══════════════════════════════════════════ -->
+<div id="emotions" class="cat-section sec-emotion">
+  <h2>❤️ Managing Emotions</h2>
+  <div class="cat-divider"></div>
+  <p class="cat-intro">Emotional regulation is one of the hardest things for autistic children — and one of the most impactful areas to support. These strategies work with the nervous system rather than against it.</p>
+
+  <div class="strategy-stack">
+
+    <!-- ZONES OF REGULATION -->
+    <div class="strat-card">
+      <div class="strat-card-header">
+        <div class="strat-icon">🎨</div>
+        <div class="strat-header-text">
+          <h3>Zones of Regulation</h3>
+          <p class="strat-tagline">A colour-coded framework for understanding emotional and physiological states — giving children (and parents) a shared, accessible language for inner experience.</p>
+        </div>
+      </div>
+      <div class="strat-body">
+        <div>
+          <div class="why-block">
+            <h4>💡 Why it works</h4>
+            <p>Developed by occupational therapist Leah Kuypers, the Zones framework gives children a concrete, visual language for internal states that many find impossible to describe verbally. Crucially, it shifts the conversation from behaviour ("you're being naughty") to regulation ("you're in the yellow zone — what would help you get back to green?"), which is kinder, more accurate, and far more useful.</p>
+          </div>
+          <br>
+          <div class="zone-grid">
+            <div class="zone-card blue">
+              <div class="zc-name">🔵 Blue Zone</div>
+              <div class="zc-desc">Low energy — tired, sad, sick, bored, moving slowly</div>
+            </div>
+            <div class="zone-card green">
+              <div class="zc-name">🟢 Green Zone</div>
+              <div class="zc-desc">Ready to learn — calm, happy, focused, content. The target zone.</div>
+            </div>
+            <div class="zone-card yellow">
+              <div class="zc-name">🟡 Yellow Zone</div>
+              <div class="zc-desc">Heightened — worried, frustrated, excited, sensory overwhelmed, silly</div>
+            </div>
+            <div class="zone-card red">
+              <div class="zc-name">🔴 Red Zone</div>
+              <div class="zc-desc">Out of control — furious, terrified, meltdown territory, panic</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="how-block">
+            <h4>How to introduce Zones at home</h4>
+            <ol class="how-list">
+              <li data-n="1">Introduce the zones when calm and curious — make it a conversation, not a crisis tool</li>
+              <li data-n="2">Create a Zones chart for the home with pictures of your child in each state</li>
+              <li data-n="3">Check in regularly and casually: "What zone are you in right now?" — normalise it throughout the day</li>
+              <li data-n="4">Build a personalised "tools menu" for each zone together: what helps move from yellow to green for <em>your</em> child specifically?</li>
+              <li data-n="5">Model your own zones openly: "I'm in yellow right now — I'm going to do some deep breathing to get to green"</li>
+              <li data-n="6">Work with school to use the same language — a child who hears "what zone are you in?" from both parent and teacher has a much more consistent experience</li>
+            </ol>
+          </div>
+          <br>
+          <div class="practice-block">
+            <h4>🌿 In practice</h4>
+            <p>School was sending notes about Finn (age 10) "disrupting class for no reason." After learning the Zones framework, his mum realised he was arriving in yellow zone every day due to the sensory experience of the bus. She changed his route and introduced 15 minutes of "green zone time" before school. Incidents at school dropped significantly within a month.</p>
+          </div>
+          <br>
+          <div class="watchout-block">
+            <span class="wo-icon">⚠️</span>
+            <p><strong>All zones are valid — never make any zone "wrong".</strong> A child in yellow or red isn't misbehaving, they're dysregulated. The goal is to support movement between zones, not to shame a child for being in a difficult one.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REGULATION TOOLKIT -->
+    <div class="strat-card">
+      <div class="strat-card-header">
+        <div class="strat-icon">🧰</div>
+        <div class="strat-header-text">
+          <h3>Building a Regulation Toolkit</h3>
+          <p class="strat-tagline">A personalised collection of sensory and activity-based tools that help your child self-regulate — identified with them, and made physically accessible.</p>
+        </div>
+      </div>
+      <div class="strat-body">
+        <div>
+          <div class="why-block">
+            <h4>💡 Why it works</h4>
+            <p>Self-regulation isn't a personality trait — it's a skill supported by sensory tools. Just as adults make tea, go for a walk or listen to music when stressed, children need their own toolkit. What works is highly individual and rooted in their unique sensory profile. A toolkit the child helped build has the added benefit of being theirs — it feels safe and known.</p>
+          </div>
+          <br>
+          <div class="how-block">
+            <h4>Types of tools and when to use them</h4>
+          </div>
+          <div class="type-grid" style="margin-top:10px;">
+            <div class="type-item">
+              <div class="ti-label">🔴→🟢 Alert-reducing</div>
+              <p>Deep pressure, weighted blanket, slow rocking, dim lights, slow music, heavy work (carrying, pushing)</p>
+            </div>
+            <div class="type-item">
+              <div class="ti-label">🔵→🟢 Alerting</div>
+              <p>Bouncing, cold water on face, bright lights, fast music, jumping, chewy foods</p>
+            </div>
+            <div class="type-item">
+              <div class="ti-label">🟡→🟢 Calming</div>
+              <p>Fidget tools, chewing (chewy tube), rhythmic movement, nature, quiet routine activity</p>
+            </div>
+            <div class="type-item">
+              <div class="ti-label">🟢 Maintaining</div>
+              <p>Preferred activities, sensory breaks during the day, scheduled downtime, special interest time</p>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="how-block">
+            <h4>How to build the toolkit together</h4>
+            <ol class="how-list">
+              <li data-n="1">Try different tools at a calm time and observe what genuinely helps your child</li>
+              <li data-n="2">Create a small "calm kit" — a box or pouch they can access in the living room or at school</li>
+              <li data-n="3">Label it as theirs and make it special — ownership matters enormously</li>
+              <li data-n="4">Create a visual "regulation menu" with 4–5 options they can choose from when dysregulated</li>
+              <li data-n="5">Review and update regularly — what works at age 6 may not work at age 10</li>
+            </ol>
+          </div>
+          <br>
+          <div class="practice-block">
+            <h4>🌿 In practice</h4>
+            <p>Maya's school calm corner had generic stress balls she never used. Her OT and mum worked with Maya to discover she found chewing and rocking most calming. They sourced a specific chewy tube she loved and added a rocking chair. Maya began going there voluntarily and started telling her mum "I went to my corner today" with something close to pride.</p>
+          </div>
+          <br>
+          <div class="watchout-block">
+            <span class="wo-icon">⚠️</span>
+            <p><strong>Tools need to be practised during calm times to be available during crisis.</strong> A breathing technique introduced for the first time during a meltdown will not be accessible — the skill must be embedded first. Practice is not optional; it's the whole mechanism.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CO-REGULATION -->
+    <div class="strat-card">
+      <div class="strat-card-header">
+        <div class="strat-icon">🤝</div>
+        <div class="strat-header-text">
+          <h3>Co-Regulation: Your Calm Comes First</h3>
+          <p class="strat-tagline">Children's nervous systems synchronise with their caregivers. Your regulated presence is the most powerful tool in any difficult moment — more powerful than any words.</p>
+        </div>
+      </div>
+      <div class="strat-body">
+        <div>
+          <div class="why-block">
+            <h4>💡 Why it works</h4>
+            <p>This isn't metaphor — it's neuroscience. Mirror neurons, the polyvagal system, and decades of attachment research confirm that a child's nervous system literally regulates in response to an adult's. A calm caregiver is genuinely physiologically calming. An anxious or angry caregiver is genuinely escalating. You cannot calm a child you haven't first calmed yourself.</p>
+          </div>
+          <br>
+          <div class="how-block">
+            <h4>How to co-regulate in the moment</h4>
+            <ol class="how-list">
+              <li data-n="1">Regulate yourself first — even one slow breath before you engage makes a measurable difference</li>
+              <li data-n="2">Slow your breathing: your child will unconsciously mirror it</li>
+              <li data-n="3">Soften your face — consciously relax your jaw and forehead</li>
+              <li data-n="4">Get physically on their level — sit or crouch rather than stand over them</li>
+              <li data-n="5">Keep your voice low and slow — not a whisper (which can feel threatening), just quiet and unhurried</li>
+              <li data-n="6">Minimise talking — a regulated, nearby presence is more powerful than reassuring words during a meltdown</li>
+            </ol>
+          </div>
+        </div>
+        <div>
+          <div class="practice-block">
+            <h4>🌿 In practice</h4>
+            <p>When her son was mid-meltdown, Sarah used to plead, reason, and eventually shout in desperation. A professional suggested she try sitting quietly on the floor nearby, saying nothing, breathing slowly. Within four minutes he came to sit next to her. Doing less — but regulated — was more effective than all the words combined. She described it as "the most counterintuitive thing I've ever done, and the most effective."</p>
+          </div>
+          <br>
+          <div class="watchout-block">
+            <span class="wo-icon">⚠️</span>
+            <p><strong>Co-regulation depletes your own resources.</strong> These interactions are genuinely exhausting. Your self-care is not selfish — it's what makes the next co-regulation possible. Access parent support, speak to your GP, and have an honest "debrief" agreement with your partner. You cannot pour from an empty cup.</p>
+          </div>
+          <div class="tip-chips" style="margin-top:14px;">
+            <span class="tip-chip">💨 One breath before engaging</span>
+            <span class="tip-chip">⬇️ Get on their level</span>
+            <span class="tip-chip">🤫 Silence is often enough</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BREATHING TECHNIQUES -->
+    <div class="strat-card">
+      <div class="strat-card-header">
+        <div class="strat-icon">💨</div>
+        <div class="strat-header-text">
+          <h3>Breathing &amp; Calming Techniques</h3>
+          <p class="strat-tagline">Structured breathing exercises that directly influence the nervous system — physiologically real, not just "take a deep breath." But only if practised first when calm.</p>
+        </div>
+      </div>
+      <div class="strat-body full-width">
+        <div>
+          <div class="why-block">
+            <h4>💡 Why it works</h4>
+            <p>Slow, controlled exhalation activates the parasympathetic nervous system — the body's "rest and digest" mode — directly counteracting the fight-or-flight response. This is physiologically real. The key is that techniques must be practised during calm times first. They need to be accessible through habit before they can be retrieved under stress.</p>
+          </div>
+          <br>
+          <div class="technique-cards" style="margin:16px 0;">
+            <div class="tech-card">
+              <div class="tc-icon">🌸</div>
+              <h5>Belly Breathing</h5>
+              <p>Place a toy on tummy — breathe in to make it rise, out to lower it. Great for under 7s.</p>
+            </div>
+            <div class="tech-card">
+              <div class="tc-icon">⬛</div>
+              <h5>Box Breathing</h5>
+              <p>In for 4, hold 4, out for 4, hold 4. Repeat. Evidence-based, used in clinical settings. Good for older children.</p>
+            </div>
+            <div class="tech-card">
+              <div class="tc-icon">🌹</div>
+              <h5>Smell &amp; Blow</h5>
+              <p>Breathe in through the nose (smelling flowers), out through the mouth (blowing candles). Memorable and fun.</p>
+            </div>
+            <div class="tech-card">
+              <div class="tc-icon">🫧</div>
+              <h5>Bubble Breathing</h5>
+              <p>Literally blow bubbles — the slow exhalation required is naturally and gently calming.</p>
+            </div>
+            <div class="tech-card">
+              <div class="tc-icon">🫁</div>
+              <h5>Physiological Sigh</h5>
+              <p>Double inhale through nose, then long slow exhale. Clinical research shows this is the fastest way to calm the nervous system.</p>
+            </div>
+          </div>
+          <div class="how-block">
+            <h4>How to make these work</h4>
+            <ol class="how-list">
+              <li data-n="1">Practise as games when calm — "breathing races", blowing cotton balls, keeping a feather in the air</li>
+              <li data-n="2">Do them alongside your child — never instruct them to do it alone</li>
+              <li data-n="3">Make them part of a regular calm-down routine, not just a crisis response</li>
+              <li data-n="4">For older children and teens: Calm app, Headspace for Kids, Breathe Think Do with Sesame (younger)</li>
+            </ol>
+          </div>
+          <br>
+          <div class="practice-block">
+            <h4>🌿 In practice</h4>
+            <p>Every Sunday evening, Callum's family did "breathing games" — blowing bubbles, feather racing, cotton ball blowing. After six weeks of this gentle weekly practice, Callum (age 7) started using "flower breathing" during a hard moment at school, completely unprompted. The teacher was stunned. The habit had embedded quietly and was available when he needed it.</p>
+          </div>
+          <br>
+          <div class="watchout-block">
+            <span class="wo-icon">⚠️</span>
+            <p><strong>"Just breathe!" during a meltdown is ineffective and can feel dismissive.</strong> The technique must be pre-learned and associated with calm. It's like fire drills — you practise when there's no fire so that the action is automatic when there is one.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<div class="section-end"></div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- SECTION 4: POSITIVE BEHAVIOUR              -->
+<!-- ══════════════════════════════════════════ -->
+<div id="positive" class="cat-section sec-positive">
+  <h2>✅ Positive Behaviour</h2>
+  <div class="cat-divider"></div>
+  <p class="cat-intro">Building positive behaviour is about teaching new skills — not just stopping unwanted ones. These strategies work with the brain's reward systems and with your child's need for predictability and agency.</p>
+
+  <div class="strategy-stack">
+
+    <!-- POSITIVE REINFORCEMENT -->
+    <div class="strat-card">
+      <div class="strat-card-header">
+        <div class="strat-icon">🌟</div>
+        <div class="strat-header-text">
+          <h3>Positive Reinforcement — Getting It Right</h3>
+          <p class="strat-tagline">The single most effective tool for building behaviour — but only if what you're offering is genuinely motivating to <em>your</em> child, not to you.</p>
+        </div>
+      </div>
+      <div class="strat-body">
+        <div>
+          <div class="why-block">
+            <h4>💡 Why it works</h4>
+            <p>Reinforcement — unlike punishment — builds skills. It works with the brain's dopamine system rather than its stress response. For autistic children it's especially effective because it doesn't rely on social motivation (wanting to please) which may be less strong. The critical rule: <strong>the reinforcer must be genuinely motivating to the child, not to the parent.</strong> A sticker for a child who doesn't care about stickers is not reinforcement.</p>
+          </div>
+          <br>
+          <div class="how-block">
+            <h4>How to reinforce effectively</h4>
+            <ol class="how-list">
+              <li data-n="1">Identify what your child truly finds rewarding — observe what they seek out voluntarily, ask them directly</li>
+              <li data-n="2">Give the reward immediately after the behaviour — delay significantly reduces effectiveness</li>
+              <li data-n="3">Match the reward to the effort: small wins get small rewards; big achievements get bigger ones</li>
+              <li data-n="4">Be specific: "That was brilliant — you waited quietly for TWO whole minutes" not "good boy"</li>
+              <li data-n="5">Start with easy wins — set the bar low and raise it gradually. Early success builds the momentum to try harder things.</li>
+              <li data-n="6">Gradually fade material rewards over time as the behaviour becomes intrinsic or socially reinforced</li>
+            </ol>
+          </div>
+          <div class="type-grid" style="margin-top:14px;">
+            <div class="type-item">
+              <div class="ti-label">👏 Social</div>
+              <p>Specific praise, one-to-one attention, a special activity together</p>
+            </div>
+            <div class="type-item">
+              <div class="ti-label">🎮 Activity</div>
+              <p>Extra screen time, choosing the film, a trip to the park</p>
+            </div>
+            <div class="type-item">
+              <div class="ti-label">🎁 Tangible</div>
+              <p>Small toy, preferred item, special food — used sparingly</p>
+            </div>
+            <div class="type-item">
+              <div class="ti-label">🌀 Sensory</div>
+              <p>Trampolining, a particular texture, a specific sensory experience they love</p>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="practice-block">
+            <h4>🌿 In practice</h4>
+            <p>Rosa (age 6) refused to get off screens at bedtime — every night ended in crisis. Her parents stopped fighting and created a "screen minute bank": every small task completed during the day banked up to 30 minutes for the evening. Rosa went from 90-minute bedtime battles to arriving at the kitchen with proud announcements of how many minutes she'd banked that day.</p>
+          </div>
+          <br>
+          <div class="watchout-block">
+            <span class="wo-icon">⚠️</span>
+            <p><strong>Never remove earned rewards as punishment.</strong> This destroys trust and makes the system meaningless. What's earned is earned. Consequences for other behaviour should be a separate track entirely — mixing them destabilises the whole system.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DESCRIPTIVE PRAISE -->
+    <div class="strat-card">
+      <div class="strat-card-header">
+        <div class="strat-icon">🗨️</div>
+        <div class="strat-header-text">
+          <h3>Descriptive Praise — The Power of Specificity</h3>
+          <p class="strat-tagline">Replacing "well done!" with precise descriptions of what your child did well and why it mattered. Sounds minor — makes a huge difference.</p>
+        </div>
+      </div>
+      <div class="strat-body">
+        <div>
+          <div class="why-block">
+            <h4>💡 Why it works</h4>
+            <p>"Good boy" is neurologically meaningless because the brain doesn't know which behaviour to repeat. "I really liked how you waited for your turn just then — that was brilliant and made things much easier for everyone" tells the brain exactly what was good and why it mattered. For autistic children learning social rules explicitly, this precision is especially valuable.</p>
+          </div>
+          <br>
+          <div class="how-block">
+            <h4>The formula for descriptive praise</h4>
+            <ol class="how-list">
+              <li data-n="1"><strong>Name the behaviour specifically:</strong> "You put your shoes away without being asked…"</li>
+              <li data-n="2"><strong>Add why it mattered:</strong> "…which saved us loads of time this morning"</li>
+              <li data-n="3">Deliver it warmly but without gushing — overdone praise can feel overwhelming or insincere</li>
+              <li data-n="4">Be immediate: praise within seconds of the behaviour where possible</li>
+              <li data-n="5">For children who find direct praise uncomfortable: use <strong>indirect praise</strong> — tell another adult (loudly enough to be heard) what your child did brilliantly</li>
+            </ol>
+          </div>
+        </div>
+        <div>
+          <div class="practice-block">
+            <h4>🌿 In practice — indirect praise in action</h4>
+            <p>"I was telling Nan on the phone that you got dressed completely by yourself this morning — she was so impressed." Said at the dinner table, not directed at the child. Received with a barely-hidden smile. Far more willingness to dress independently the following day. Many autistic children accept overheard praise in a way they cannot accept direct praise.</p>
+          </div>
+          <br>
+          <div class="watchout-block">
+            <span class="wo-icon">⚠️</span>
+            <p><strong>Never pair praise with a sting:</strong> "You were SO good today — why can't you be like that all the time?" This cancels the praise completely and teaches the child that compliments come with a hidden criticism attached. Praise should land cleanly and then end.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOKEN ECONOMY -->
+    <div class="strat-card">
+      <div class="strat-card-header">
+        <div class="strat-icon">⭐</div>
+        <div class="strat-header-text">
+          <h3>Token Economy Systems</h3>
+          <p class="strat-tagline">Visual systems where children earn tokens for target behaviours and exchange them for rewards — making progress visible, immediate, and motivating.</p>
+        </div>
+      </div>
+      <div class="strat-body">
+        <div>
+          <div class="why-block">
+            <h4>💡 Why it works</h4>
+            <p>Token systems bridge the gap between a behaviour and a reward that comes later. For autistic children, the visual nature of a token board is particularly powerful — they can always see exactly where they are and how close they are to their goal. It also moves the "deal" off the parent and onto the system, which reduces power struggles significantly.</p>
+          </div>
+          <br>
+          <div class="how-block">
+            <h4>How to set one up that works</h4>
+            <ol class="how-list">
+              <li data-n="1">Choose one or two specific target behaviours — not general "being good"</li>
+              <li data-n="2">Design the board with your child: space theme, favourite characters, their choice</li>
+              <li data-n="3">Start with only 3–5 tokens needed for a reward, then increase gradually</li>
+              <li data-n="4">Give tokens immediately after the target behaviour: "You waited so patiently — that earns a star"</li>
+              <li data-n="5"><strong>Never remove tokens once earned</strong> — this creates distrust and anxiety. They are theirs.</li>
+              <li data-n="6">Review targets regularly: as a behaviour improves, adjust the target slightly</li>
+            </ol>
+          </div>
+        </div>
+        <div>
+          <div class="practice-block">
+            <h4>🌿 In practice</h4>
+            <p>Getting Ethan (age 7) to brush his teeth was a nightly crisis. His parents created a space-themed "rocket fuel" board — each tooth-brushing earns a "fuel drop" sticker; five drops = rocket launch (a special story). Within two weeks the drama was gone. Within two months they were fading the board and he brushed without prompting.</p>
+          </div>
+          <br>
+          <div class="watchout-block">
+            <span class="wo-icon">⚠️</span>
+            <p><strong>If they're not earning tokens, the bar is too high — lower it, not the consequence.</strong> A system where success is out of reach quickly becomes demoralising and abandoned. Early and frequent success is the engine of this whole approach.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REWARD MENU -->
+    <div class="strat-card">
+      <div class="strat-card-header">
+        <div class="strat-icon">📋</div>
+        <div class="strat-header-text">
+          <h3>Building a Reward Menu Together</h3>
+          <p class="strat-tagline">A jointly created, visible list of rewards that genuinely motivate your child — giving them ownership, agency, and something real to work towards.</p>
+        </div>
+      </div>
+      <div class="strat-body">
+        <div>
+          <div class="why-block">
+            <h4>💡 Why it works</h4>
+            <p>A reward only works if it's genuinely desired by the child. Parents often default to rewards they believe children "should" value — stickers, praise, small toys. Involving the child in building the menu gives them ownership, increases motivation, and teaches self-awareness about their own preferences. It also makes the child an active participant rather than a passive subject of the behaviour system.</p>
+          </div>
+          <br>
+          <div class="how-block">
+            <h4>How to build a reward menu</h4>
+            <ol class="how-list">
+              <li data-n="1">Sit together at a genuinely calm time and brainstorm: "What would feel like a really great reward?"</li>
+              <li data-n="2">Include rewards at different sizes: quick wins (a specific snack, 15 extra minutes), medium (choosing the film), big (a trip somewhere special)</li>
+              <li data-n="3">Write or draw them onto cards and keep them visible — don't keep the menu in your head</li>
+              <li data-n="4">Include non-material rewards: staying up 20 minutes later, one-to-one time with a parent, choosing dinner</li>
+              <li data-n="5">Revisit the menu every few weeks — what motivates a child changes regularly</li>
+              <li data-n="6">Add a "mystery reward" option for variety — some children find anticipation itself motivating</li>
+            </ol>
+          </div>
+        </div>
+        <div>
+          <div class="practice-block">
+            <h4>🌿 In practice</h4>
+            <p>Every reward system for Nia (age 9) had failed — her parents kept choosing things they thought she'd want. When they finally sat with her and asked, her dream "big reward" turned out to be 30 minutes of Minecraft with Dad — not a toy or outing. That became the anchor of their system. Engagement immediately went through the roof, because the reward was genuinely hers.</p>
+          </div>
+          <br>
+          <div class="watchout-block">
+            <span class="wo-icon">⚠️</span>
+            <p><strong>Avoid using removal of loved activities as punishment.</strong> This creates a scarcity mindset — the child becomes anxious about losing things they love and may behave worse, not better. Keep the reward system and any consequences as entirely separate tracks.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<div class="section-end"></div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- SECTION 5: IN THE MOMENT                   -->
+<!-- ══════════════════════════════════════════ -->
+<div id="moment" class="cat-section sec-moment">
+  <h2>⚡ In the Moment</h2>
+  <div class="cat-divider"></div>
+  <p class="cat-intro">When things are escalating or already difficult, these strategies give you practical tools to de-escalate, redirect and hold limits without making things worse. None of them require a calm child — only a reasonably calm parent.</p>
+
+  <div class="strategy-stack">
+
+    <!-- PLANNED IGNORING -->
+    <div class="strat-card">
+      <div class="strat-card-header">
+        <div class="strat-icon">🙈</div>
+        <div class="strat-header-text">
+          <h3>Planned Ignoring — The Full Picture</h3>
+          <p class="strat-tagline">Withdrawing attention from a specific behaviour to reduce it — while staying completely warm toward the child as a person. This is one of the most misunderstood strategies in parenting.</p>
+        </div>
+      </div>
+      <div class="strat-body">
+        <div>
+          <div class="why-block">
+            <h4>💡 Why it works</h4>
+            <p>Many behaviours are maintained by the attention they generate — even negative attention (shouting, lecturing) is still attention. By withdrawing the "reward" of attention, the behaviour loses its function. This is evidence-based and effective — but only for attention-seeking behaviour, and only with near-perfect consistency.</p>
+          </div>
+          <br>
+          <div class="type-grid" style="margin-bottom:14px;">
+            <div class="type-item">
+              <div class="ti-label">✅ Use for</div>
+              <p>Attention-seeking, whining, low-level silliness, repetitive minor verbal behaviours</p>
+            </div>
+            <div class="type-item">
+              <div class="ti-label">🚫 Never use for</div>
+              <p>Genuine distress, physical danger, meltdowns, behaviours driven by sensory need or anxiety</p>
+            </div>
+          </div>
+          <div class="how-block">
+            <h4>How to do planned ignoring properly</h4>
+            <ol class="how-list">
+              <li data-n="1">Define the exact behaviour you're ignoring in advance — know precisely what you're responding to</li>
+              <li data-n="2">Completely withdraw attention: no eye contact, no expression, move away physically if needed</li>
+              <li data-n="3">Expect an extinction burst — it gets worse before better. This is normal and means it's working.</li>
+              <li data-n="4">The moment it stops: reconnect warmly and immediately — "I'm back! Want a snack?" The child must experience that stopping the behaviour restores connection</li>
+              <li data-n="5">Simultaneously catch and reinforce the alternative behaviour lavishly</li>
+              <li data-n="6">Be 100% consistent — one response undoes significant progress</li>
+            </ol>
+          </div>
+        </div>
+        <div>
+          <div class="practice-block">
+            <h4>🌿 In practice</h4>
+            <p>Every time Alex's parents were on the phone, he became louder and more disruptive. They identified this as attention-seeking and agreed to fully ignore it while giving him a tablet and a visual timer. When the call ended, they'd immediately give him attention and praise briefly for waiting. It took 10 days of escalation first — then the behaviour dropped sharply.</p>
+          </div>
+          <br>
+          <div class="watchout-block">
+            <span class="wo-icon">⚠️</span>
+            <p><strong>Never use planned ignoring for a child in genuine distress or sensory need.</strong> A meltdown and attention-seeking look different if you know your child — one is a behaviour, the other is a crisis. Using planned ignoring during a crisis can cause real harm and erode trust deeply. When in doubt: respond.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REDIRECTION -->
+    <div class="strat-card">
+      <div class="strat-card-header">
+        <div class="strat-icon">↩️</div>
+        <div class="strat-header-text">
+          <h3>Redirection — Proactive and Reactive</h3>
+          <p class="strat-tagline">Shifting a child's focus, body or environment away from a trigger — before things escalate wherever possible. Proactive redirection is a skill that improves with practice.</p>
+        </div>
+      </div>
+      <div class="strat-body">
+        <div>
+          <div class="why-block">
+            <h4>💡 Why it works</h4>
+            <p>The brain cannot hold two competing focal points simultaneously. Redirection works by introducing something more compelling than the current trigger. Proactive redirection — spotting the early warning signs and acting before escalation — is far more effective than trying to redirect someone already in crisis, and costs far less emotional energy all round.</p>
+          </div>
+          <br>
+          <div class="type-grid" style="margin-bottom:14px;">
+            <div class="type-item">
+              <div class="ti-label">🏠 Environmental</div>
+              <p>Move to a different room or space — a physical change breaks the cycle</p>
+            </div>
+            <div class="type-item">
+              <div class="ti-label">🎯 Activity</div>
+              <p>Introduce a different task or object that they find absorbing</p>
+            </div>
+            <div class="type-item">
+              <div class="ti-label">💬 Conversational</div>
+              <p>"Did you know…?" on a special interest topic — genuinely shifts focus</p>
+            </div>
+            <div class="type-item">
+              <div class="ti-label">🚶 Physical</div>
+              <p>Start walking somewhere together — moving the body moves the mind</p>
+            </div>
+          </div>
+          <div class="how-block">
+            <h4>How to use redirection effectively</h4>
+            <ol class="how-list">
+              <li data-n="1">Learn your child's personal early warning signs — specific tone, increased stimming, quietness before a storm</li>
+              <li data-n="2">Act before it escalates — once in red zone, redirection becomes much harder</li>
+              <li data-n="3">Keep a bank of known redirectors for your child: certain topics, activities, or sensory inputs that reliably shift focus</li>
+              <li data-n="4">Use it naturally and without making a big deal: "Oh! Come and look at this…"</li>
+            </ol>
+          </div>
+        </div>
+        <div>
+          <div class="practice-block">
+            <h4>🌿 In practice</h4>
+            <p>In the run-up to sibling arguments, Jasmine's mum learned her early signs — a specific tone of voice and increased physical proximity. Before things escalated she'd say "Actually, I really need your help with something in the kitchen" (a real or manufactured task). This was a reliable circuit-breaker. The lesson came later, in a calm moment.</p>
+          </div>
+          <br>
+          <div class="watchout-block">
+            <span class="wo-icon">⚠️</span>
+            <p><strong>Redirection can feel like letting them "get away with it"</strong> — and that's worth sitting with. The goal in the moment is de-escalation and safety. Learning and reflection happen in calm moments, not in the middle of escalation. You're not avoiding the lesson; you're choosing when to teach it.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DE-ESCALATION -->
+    <div class="strat-card">
+      <div class="strat-card-header">
+        <div class="strat-icon">🌡️</div>
+        <div class="strat-header-text">
+          <h3>De-escalation: Lowering the Temperature</h3>
+          <p class="strat-tagline">A set of body-language and communication strategies that reduce intensity without retreating from necessary limits. Escalation is a two-person process — you can interrupt it from your side.</p>
+        </div>
+      </div>
+      <div class="strat-body">
+        <div>
+          <div class="why-block">
+            <h4>💡 Why it works</h4>
+            <p>Your physiological state directly influences your child's nervous system — escalation is genuinely contagious. De-escalation works by interrupting the cycle from your side. Research consistently shows that adult behaviour during a child's crisis has more impact on outcomes than the child's own state at that moment.</p>
+          </div>
+          <br>
+          <div class="how-block">
+            <h4>Core de-escalation principles</h4>
+            <ol class="how-list">
+              <li data-n="1"><strong>Lower your voice</strong> — not to a whisper, but slow and quiet. People naturally match volume; speaking quietly is the single most effective intervention.</li>
+              <li data-n="2"><strong>Slow your body</strong> — fast or energetic movements are threatening. Move deliberately and unhurriedly.</li>
+              <li data-n="3"><strong>Reduce talking</strong> — every extra word is a demand on a brain already at capacity. Less is more.</li>
+              <li data-n="4"><strong>Side by side, not face to face</strong> — standing or sitting alongside is non-threatening; face-to-face is confrontational.</li>
+              <li data-n="5"><strong>Offer a face-saving exit</strong> — give the child a way to back down without humiliation: "You don't have to decide right now"</li>
+              <li data-n="6"><strong>Acknowledge before directing</strong> — "I can see you're really frustrated" before any instruction at all</li>
+            </ol>
+          </div>
+        </div>
+        <div>
+          <div class="what-not-block">
+            <h4>🚫 Things that escalate rather than calm</h4>
+            <ul>
+              <li>"Calm down" — never works, almost always escalates</li>
+              <li>"I'm going to count to three" — creates a countdown to crisis</li>
+              <li>"Fine, do what you want" — sounds like abandonment</li>
+              <li>"We'll talk about this later" — too abstract, can feel threatening</li>
+              <li>Rapid, loud or crowding physical presence</li>
+              <li>Involving additional adults or onlookers</li>
+            </ul>
+          </div>
+          <br>
+          <div class="practice-block">
+            <h4>🌿 In practice</h4>
+            <p>During public escalations in shops, Alex's dad used to reason loudly — which made everything worse. He now says only one quiet thing: "I hear you. Let's move over here." He guides away from the trigger, says nothing for two minutes, then offers one simple choice. Public incidents still happen — but they resolve in minutes rather than hours.</p>
+          </div>
+          <br>
+          <div class="watchout-block">
+            <span class="wo-icon">⚠️</span>
+            <p><strong>De-escalation is not the same as giving in.</strong> You can absolutely hold a limit while lowering the emotional temperature. "We're still leaving the park — let's walk to the car together" maintains the boundary without a battle. The limit stays; the fight dissolves.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OFFERING CHOICES -->
+    <div class="strat-card">
+      <div class="strat-card-header">
+        <div class="strat-icon">🔀</div>
+        <div class="strat-header-text">
+          <h3>Offering Choices Under Pressure</h3>
+          <p class="strat-tagline">Two limited, genuine choices in moments of tension — giving the child enough sense of control to lower the threat response, without removing the limit itself.</p>
+        </div>
+      </div>
+      <div class="strat-body">
+        <div>
+          <div class="why-block">
+            <h4>💡 Why it works</h4>
+            <p>For autistic children — especially those with a PDA profile — perceived loss of control is genuinely threatening to the nervous system. "Two choices" says: you still have power here. This lowers the threat response without removing necessary limits. The choice itself is almost beside the point; the sense of agency is what does the work.</p>
+          </div>
+          <br>
+          <div class="how-block">
+            <h4>How to offer choices that actually work</h4>
+            <ol class="how-list">
+              <li data-n="1">Both choices must be ones you're genuinely happy with: "Do you want your coat on here or at the door?" — not "Do you want to put your coat on or be cold?"</li>
+              <li data-n="2">Keep choices concrete and specific — two clear options, not open-ended</li>
+              <li data-n="3">Give a genuine moment to decide: "Take your time"</li>
+              <li data-n="4">Honour whichever they choose — completely, without comment or reluctance</li>
+              <li data-n="5">For very dysregulated children: drop to one simple binary: "Stay here or come with me?"</li>
+              <li data-n="6">For PDA profiles: frame as invitations or observations rather than even choices: "I wonder if moving to the other room might help…"</li>
+            </ol>
+          </div>
+        </div>
+        <div>
+          <div class="practice-block">
+            <h4>🌿 In practice</h4>
+            <p>"Get your shoes on" always triggered resistance for Rory (age 6). His dad switched to: "Your shoes — do you want the Velcro ones or the trainers today?" Rory chose without argument. It was never about shoes — it was about control. Giving him a tiny, real choice removed the need for the whole battle.</p>
+          </div>
+          <br>
+          <div class="watchout-block">
+            <span class="wo-icon">⚠️</span>
+            <p><strong>Choices only work if both options are genuinely acceptable to you.</strong> If you're clearly steering towards one "correct" answer, children — who are often socially very perceptive — detect the manipulation and resist even more intensely. The choice must be real.</p>
+          </div>
+          <div class="tip-chips" style="margin-top:14px;">
+            <span class="tip-chip">🎯 Concrete, specific options</span>
+            <span class="tip-chip">✅ Honour either choice</span>
+            <span class="tip-chip">🤫 For PDA: invite, don't instruct</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<div class="section-end"></div>
+
+<footer>
+  <p>ASD Support Pack – Strategy Toolkit In Depth &nbsp;·&nbsp; For Parents &amp; Carers in Cheshire East</p>
+  <p style="margin-top:6px;">Based on content from the NHS Mid Cheshire Hospitals Foundation Trust, the National Autistic Society, Autism Education Trust, Zones of Regulation (Leah Kuypers), and Carol Gray Social Stories &nbsp;·&nbsp; July 2020 &amp; updated guidance</p>
+</footer>
+
+<script>
+  // Highlight active category in nav as user scrolls
+  const sections = ['environment','communication','emotions','positive','moment'];
+  const links = document.querySelectorAll('.cat-link');
+
+  function updateNav() {
+    let active = sections[0];
+    sections.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && el.getBoundingClientRect().top < 140) active = id;
+    });
+    links.forEach(l => {
+      l.classList.toggle('active', l.getAttribute('href') === '#' + active);
+    });
+  }
+
+  window.addEventListener('scroll', updateNav, { passive: true });
+  updateNav();
+</script>
+</body>
+</html>
