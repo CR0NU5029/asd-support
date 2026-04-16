@@ -229,6 +229,53 @@
     .strategy-card.open .expand-hint::after { content: " ▲"; }
     .strategy-card:not(.open) .expand-hint::after { content: " ▼"; }
 
+    /* DEEP DIVE LINK on strategy cards */
+    .strategy-card .deep-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 10px;
+      font-size: 12.5px;
+      font-weight: 800;
+      color: var(--teal);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .strategy-card .deep-link:hover { color: #3A8A80; text-decoration: underline; }
+
+    /* DEEP DIVE CTA BANNER */
+    .deep-dive-cta {
+      margin-top: 36px;
+      background: linear-gradient(135deg, #E8875A 0%, #E85A6A 100%);
+      border-radius: 16px;
+      padding: 28px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .deep-dive-cta-text { color: white; }
+    .deep-dive-cta-text h3 { font-size: 20px; font-weight: 900; margin-bottom: 6px; }
+    .deep-dive-cta-text p { font-size: 14.5px; opacity: 0.92; max-width: 520px; }
+    .deep-dive-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: white;
+      color: var(--orange);
+      font-family: 'Nunito', sans-serif;
+      font-size: 15px;
+      font-weight: 800;
+      padding: 13px 24px;
+      border-radius: 50px;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+    }
+    .deep-dive-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
+
     /* FOOTER */
     footer {
       text-align: center;
@@ -519,6 +566,7 @@
         <h4>Choose Your Battles</h4>
         <p style="font-size:13.5px;color:var(--subtext)">Ask: is this worth a massive meltdown? Flexibility at home matters.</p>
         <div class="example">Save firm boundaries for what genuinely matters — safety, harm. Let smaller things go when anxiety is high.</div>
+        <a href="09b-home-strategies.html#battles" class="deep-link" onclick="event.stopPropagation()">🔍 Deep dive →</a>
         <div class="expand-hint">Tap for example</div>
       </div>
       <div class="strategy-card" onclick="toggleCard(this)">
@@ -526,6 +574,7 @@
         <h4>Balance Tolerance &amp; Demands</h4>
         <p style="font-size:13.5px;color:var(--subtext)">Match expectations to the day — not every day is the same.</p>
         <div class="example">On hard days, reduce demands. On easier days, gently increase them. Go with the flow of their anxiety levels.</div>
+        <a href="09b-home-strategies.html#tolerance" class="deep-link" onclick="event.stopPropagation()">🔍 Deep dive →</a>
         <div class="expand-hint">Tap for example</div>
       </div>
       <div class="strategy-card" onclick="toggleCard(this)">
@@ -533,6 +582,7 @@
         <h4>Indirect Praise</h4>
         <p style="font-size:13.5px;color:var(--subtext)">Direct praise can feel overwhelming — try a gentler approach.</p>
         <div class="example">"I was just telling Grandma how brilliantly you helped me earlier" (said while they're in earshot) — much easier to accept.</div>
+        <a href="09b-home-strategies.html#praise" class="deep-link" onclick="event.stopPropagation()">🔍 Deep dive →</a>
         <div class="expand-hint">Tap for example</div>
       </div>
       <div class="strategy-card" onclick="toggleCard(this)">
@@ -540,6 +590,7 @@
         <h4>Indirect Commands</h4>
         <p style="font-size:13.5px;color:var(--subtext)">Turn demands into challenges or invitations.</p>
         <div class="example">"Bet I can get my coat on before you!" or "Can you show me how you do that?" works far better than "Put your coat on."</div>
+        <a href="09b-home-strategies.html#commands" class="deep-link" onclick="event.stopPropagation()">🔍 Deep dive →</a>
         <div class="expand-hint">Tap for example</div>
       </div>
       <div class="strategy-card" onclick="toggleCard(this)">
@@ -547,6 +598,7 @@
         <h4>Pretend You Don't Know</h4>
         <p style="font-size:13.5px;color:var(--subtext)">Getting it wrong on purpose gives them control.</p>
         <div class="example">Misread a word in a book, or ask "Could you show me how you do this?" for something you want them to do independently.</div>
+        <a href="09b-home-strategies.html#pretend" class="deep-link" onclick="event.stopPropagation()">🔍 Deep dive →</a>
         <div class="expand-hint">Tap for example</div>
       </div>
       <div class="strategy-card" onclick="toggleCard(this)">
@@ -554,6 +606,7 @@
         <h4>Offer Limited Choices</h4>
         <p style="font-size:13.5px;color:var(--subtext)">Give some control without losing the outcome you need.</p>
         <div class="example">"Do you want to start your homework at 3pm or 4pm?" — either way, it gets done; they feel in control.</div>
+        <a href="09b-home-strategies.html#choices" class="deep-link" onclick="event.stopPropagation()">🔍 Deep dive →</a>
         <div class="expand-hint">Tap for example</div>
       </div>
       <div class="strategy-card" onclick="toggleCard(this)">
@@ -561,6 +614,7 @@
         <h4>When… Then</h4>
         <p style="font-size:13.5px;color:var(--subtext)">A simple, positive structure for expectations.</p>
         <div class="example">"When you've done your homework, then you can play Xbox." Keep it calm and consistent — not a threat, just information.</div>
+        <a href="09b-home-strategies.html#when-then" class="deep-link" onclick="event.stopPropagation()">🔍 Deep dive →</a>
         <div class="expand-hint">Tap for example</div>
       </div>
       <div class="strategy-card" onclick="toggleCard(this)">
@@ -568,9 +622,20 @@
         <h4>Fresh Start Every Day</h4>
         <p style="font-size:13.5px;color:var(--subtext)">Don't let yesterday follow you into today.</p>
         <div class="example">Whatever happened yesterday, start fresh. Carrying it over adds to anxiety levels and makes a meltdown more likely today.</div>
+        <a href="09b-home-strategies.html#fresh-start" class="deep-link" onclick="event.stopPropagation()">🔍 Deep dive →</a>
         <div class="expand-hint">Tap for example</div>
       </div>
     </div>
+
+    <!-- Deep Dive CTA -->
+    <div class="deep-dive-cta">
+      <div class="deep-dive-cta-text">
+        <h3>🔬 Want the full picture on every strategy?</h3>
+        <p>The deep-dive guide breaks down all 8 strategies with the neuroscience behind them, step-by-step guidance, real-life examples with named children, honest watch-outs, and links to the latest research.</p>
+      </div>
+      <a href="09b-home-strategies.html" class="deep-dive-btn">Explore All Strategies In Depth &rarr;</a>
+    </div>
+
   </div>
 </div>
 

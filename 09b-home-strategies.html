@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home Strategies Deep Dive – Managing Meltdowns</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #FDF6EE;
+      --orange: #E8875A;
+      --orange-light: #FFF0E8;
+      --teal: #5BB8AC;
+      --teal-light: #EAF7F5;
+      --yellow: #F5CE5A;
+      --yellow-light: #FFFBEA;
+      --red: #E85A6A;
+      --red-light: #FFF0F2;
+      --green: #6BBF7B;
+      --green-light: #EDF7F0;
+      --purple: #9B7EBD;
+      --purple-light: #F4EEFB;
+      --coral: #E87A7A;
+      --blue: #6BA3D6;
+      --blue-light: #EFF5FC;
+      --text: #3D3440;
+      --subtext: #7A6E7F;
+    }
+
+    body {
+      font-family: 'Nunito', system-ui, sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    /* ─── TOP NAV ─── */
+    .top-nav {
+      position: sticky; top: 0; z-index: 1100;
+      background: rgba(253,246,238,0.97);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 2px solid rgba(232,135,90,0.18);
+      padding: 10px 20px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .nav-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: white; border: 2px solid #E0D8E8; border-radius: 10px;
+      padding: 7px 16px; font-family: inherit; font-size: 14px; font-weight: 800;
+      color: #3D3440; text-decoration: none; transition: all 0.2s;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+    .nav-btn.back:hover { background: var(--teal); border-color: var(--teal); color: white; transform: translateY(-1px); }
+    .nav-btn.home:hover { background: var(--orange); border-color: var(--orange); color: white; transform: translateY(-1px); }
+    .nav-title { font-size: 14px; font-weight: 700; color: var(--subtext); }
+
+    /* ─── HERO ─── */
+    .hero {
+      background: linear-gradient(135deg, #E8875A 0%, #E85A6A 100%);
+      color: white;
+      padding: 52px 24px 44px;
+      text-align: center;
+    }
+    .hero-icon { font-size: 52px; margin-bottom: 14px; }
+    .hero h1 { font-size: clamp(26px, 5vw, 42px); font-weight: 900; margin-bottom: 12px; }
+    .hero p { font-size: 17px; opacity: 0.93; max-width: 660px; margin: 0 auto; line-height: 1.6; }
+    .hero-note {
+      display: inline-block;
+      margin-top: 20px;
+      background: rgba(255,255,255,0.18);
+      border: 1.5px solid rgba(255,255,255,0.4);
+      border-radius: 30px;
+      padding: 8px 20px;
+      font-size: 13.5px;
+      font-weight: 700;
+    }
+
+    /* ─── STICKY STRATEGY NAV ─── */
+    .strat-nav {
+      position: sticky; top: 54px; z-index: 1000;
+      background: white;
+      border-bottom: 2px solid rgba(91,184,172,0.2);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .strat-nav-inner {
+      display: flex;
+      gap: 0;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 12px;
+    }
+    .strat-nav a {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 14px 16px;
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--subtext);
+      text-decoration: none;
+      white-space: nowrap;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+    }
+    .strat-nav a:hover { color: var(--teal); border-bottom-color: var(--teal); }
+    .strat-nav a.active { color: var(--teal); border-bottom-color: var(--teal); }
+
+    /* ─── STRATEGY SECTIONS ─── */
+    .strategy-section {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 56px 24px 0;
+      scroll-margin-top: 110px;
+    }
+    .strategy-section:last-of-type { padding-bottom: 56px; }
+
+    .strategy-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      margin-bottom: 28px;
+      padding-bottom: 24px;
+      border-bottom: 3px solid var(--teal-light);
+    }
+    .strat-icon-wrap {
+      width: 72px;
+      height: 72px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, var(--teal-light), #d0f0ec);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 34px;
+      flex-shrink: 0;
+      border: 2px solid rgba(91,184,172,0.25);
+    }
+    .strategy-header-text h2 {
+      font-size: clamp(22px, 4vw, 30px);
+      font-weight: 900;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .strategy-header-text .tagline {
+      font-size: 15.5px;
+      color: var(--subtext);
+      font-style: italic;
+      font-weight: 600;
+    }
+
+    .strategy-body {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+
+    /* Content blocks */
+    .block {
+      border-radius: 14px;
+      padding: 22px 24px;
+      background: white;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+    .block-title {
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .block p { font-size: 15px; color: var(--text); line-height: 1.7; }
+    .block p + p { margin-top: 10px; }
+
+    .why-block { border-left: 5px solid var(--yellow); }
+    .why-block .block-title { color: #8A6800; }
+
+    .how-block { border-left: 5px solid var(--teal); }
+    .how-block .block-title { color: #3A8A80; }
+
+    .example-block { border-left: 5px solid var(--orange); background: #FFFAF6; }
+    .example-block .block-title { color: #9A4C20; }
+    .example-child {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--orange-light);
+      border-radius: 8px;
+      padding: 5px 12px;
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--orange);
+      margin-bottom: 10px;
+    }
+
+    .watchout-block { border-left: 5px solid var(--coral); background: #FFF8F8; }
+    .watchout-block .block-title { color: #9A3535; }
+
+    .resource-block { border-left: 5px solid var(--blue); background: var(--blue-light); }
+    .resource-block .block-title { color: #3A6A9A; }
+    .resource-links { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+    .resource-links a {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--blue);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .resource-links a:hover { color: #3A6A9A; text-decoration: underline; }
+    .resource-links a::before { content: '🔗'; font-size: 13px; }
+
+    /* How-to steps */
+    .how-steps { list-style: none; margin-top: 4px; }
+    .how-steps li {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(91,184,172,0.12);
+      font-size: 15px;
+      color: var(--text);
+    }
+    .how-steps li:last-child { border-bottom: none; padding-bottom: 0; }
+    .step-num {
+      min-width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--teal);
+      color: white;
+      font-size: 13px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* Watch out bullets */
+    .watchout-list { list-style: none; margin-top: 4px; }
+    .watchout-list li {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      font-size: 14.5px;
+      color: var(--text);
+      padding: 7px 0;
+      border-bottom: 1px solid rgba(232,122,122,0.12);
+    }
+    .watchout-list li:last-child { border-bottom: none; }
+    .watchout-list li::before { content: '⚠️'; flex-shrink: 0; margin-top: 1px; }
+
+    /* Research notes */
+    .research-note {
+      display: flex;
+      gap: 10px;
+      background: var(--purple-light);
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 13.5px;
+      color: #5A4A6E;
+      margin-top: 12px;
+      border-left: 4px solid var(--purple);
+    }
+    .research-note::before { content: '🔬'; flex-shrink: 0; }
+
+    /* Section divider */
+    .section-divider {
+      max-width: 1000px;
+      margin: 48px auto 0;
+      border: none;
+      border-top: 2px dashed rgba(91,184,172,0.25);
+    }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 28px 24px;
+      font-size: 13px;
+      color: var(--subtext);
+      background: var(--cream);
+      border-top: 2px solid rgba(91,184,172,0.15);
+      margin-top: 56px;
+    }
+    footer a { color: var(--teal); text-decoration: none; font-weight: 700; }
+    footer a:hover { text-decoration: underline; }
+
+    @media (min-width: 700px) {
+      .strategy-body {
+        grid-template-columns: 1fr 1fr;
+      }
+      .why-block, .how-block, .example-block { grid-column: span 2; }
+    }
+
+    @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+  </style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="top-nav">
+  <a href="09-managing-meltdowns.html" class="nav-btn back">← Back</a>
+  <a href="index.html" class="nav-btn home">🏠 Home</a>
+  <span class="nav-title">Home Strategies Deep Dive</span>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-icon">🏠</div>
+  <h1>Home Strategies — Deep Dive</h1>
+  <p>Each of the 8 home strategies explored in depth: the <em>why</em> behind them, exactly how to use them, and what to watch out for. Written for real life with real children.</p>
+  <span class="hero-note">💛 Especially helpful for children with PDA (Pathological Demand Avoidance)</span>
+</div>
+
+<!-- STICKY STRATEGY NAV -->
+<nav class="strat-nav" id="strat-nav">
+  <div class="strat-nav-inner">
+    <a href="#battles"    class="active">⚖️ Battles</a>
+    <a href="#tolerance"         >📊 Balance</a>
+    <a href="#praise"            >🎯 Praise</a>
+    <a href="#commands"          >🎮 Commands</a>
+    <a href="#pretend"           >🤷 Pretend</a>
+    <a href="#choices"           >🔀 Choices</a>
+    <a href="#when-then"         >⏩ When–Then</a>
+    <a href="#fresh-start"       >🌅 Fresh Start</a>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════
+     STRATEGY 1 — CHOOSE YOUR BATTLES
+══════════════════════════════════════════════════ -->
+<section class="strategy-section" id="battles">
+  <div class="strategy-header">
+    <div class="strat-icon-wrap">⚖️</div>
+    <div class="strategy-header-text">
+      <h2>Choose Your Battles</h2>
+      <p class="tagline">Not every hill is worth dying on — and choosing wisely is a skill, not a surrender</p>
+    </div>
+  </div>
+
+  <div class="strategy-body">
+
+    <div class="block why-block">
+      <div class="block-title">💡 Why This Works</div>
+      <p>Every demand you place on an autistic child adds to their "anxiety bucket." For children with PDA (Pathological Demand Avoidance), demands are processed by the nervous system as genuine threats — triggering the same fight-or-flight response you'd have if someone pointed a gun at you. This is not defiance; it is neurology.</p>
+      <p>When the bucket overflows — and it will, because school, sensory input, and social navigation fill it up long before they get home — a meltdown happens. By reducing <em>unnecessary</em> demands, you keep the bucket from reaching that tipping point.</p>
+      <p>The goal isn't to have no expectations. It's to be <strong>strategic</strong> about which ones you spend your limited daily goodwill on. Battles over safety and genuine wellbeing are always worth it. Battles over whether they eat their peas at 6pm on a Tuesday usually aren't.</p>
+      <div class="research-note">The autonomy-threat model (Liz O'Nions & colleagues, 2023) explains PDA as a nervous system that detects any demand as a potential loss of control — triggering anxiety before any reasoning can happen.</div>
+    </div>
+
+    <div class="block how-block">
+      <div class="block-title">🛠️ How to Do It</div>
+      <ol class="how-steps">
+        <li><span class="step-num">1</span><span>Before insisting, pause and ask yourself: <em>"What is the actual consequence if I let this go right now?"</em></span></li>
+        <li><span class="step-num">2</span><span>Sort demands into three groups: <strong>Non-negotiable (safety/harm)</strong>, <strong>Important but can wait</strong>, and <strong>Honestly doesn't matter</strong>.</span></li>
+        <li><span class="step-num">3</span><span>On high-anxiety days, drop the "important but can wait" list entirely. Non-negotiables only.</span></li>
+        <li><span class="step-num">4</span><span>Communicate your system to all adults in the household — a united front prevents confusion and manipulation.</span></li>
+        <li><span class="step-num">5</span><span>Revisit your list every few weeks. Priorities shift as your child grows and circumstances change.</span></li>
+      </ol>
+    </div>
+
+    <div class="block example-block">
+      <div class="block-title">📖 Real-Life Example</div>
+      <div class="example-child">👧 Ellie, age 9</div>
+      <p>Ellie arrives home from school visibly depleted — she's been "holding it together" all day. You're cooking dinner and ask her to wash her hands. She refuses flatly. The old approach: insist, escalate, meltdown, nobody eats in peace.</p>
+      <p>The battle-choosing approach: pause. Is unwashed hands before dinner a safety issue? Not really. You offer a wet wipe on the counter and say "whenever you're ready." Dinner happens without drama. Hand-washing is a conversation for a calmer evening — or not at all today. The relationship is intact. <strong>You chose the battle that mattered: dinner together, not hygiene in a crisis moment.</strong></p>
+    </div>
+
+    <div class="block watchout-block">
+      <div class="block-title">⚠️ Watch Out For</div>
+      <ul class="watchout-list">
+        <li>Don't interpret this as having no expectations — it's strategic, not a free-for-all. Children still need clear non-negotiables.</li>
+        <li>Avoid being inconsistent across the household. If one parent always lets things go and the other doesn't, your child will be confused and more anxious.</li>
+        <li>This is hard when you're exhausted too. Give yourself permission to be imperfect on this one.</li>
+      </ul>
+    </div>
+
+    <div class="block resource-block">
+      <div class="block-title">📚 Further Reading</div>
+      <div class="resource-links">
+        <a href="https://www.pdasociety.org.uk/life-with-pda-menu/for-families-menu/everyday-life/" target="_blank" rel="noopener">PDA Society — Everyday life strategies for families</a>
+        <a href="https://www.additudemag.com/pathological-demand-avoidance-strategies/" target="_blank" rel="noopener">ADDitude Magazine — PDA Parent's Guide to Demand Avoidance</a>
+        <a href="https://childmind.org/article/pathological-demand-avoidance-in-kids/" target="_blank" rel="noopener">Child Mind Institute — PDA in Kids</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- ═══════════════════════════════════════════════
+     STRATEGY 2 — BALANCE TOLERANCE & DEMANDS
+══════════════════════════════════════════════════ -->
+<section class="strategy-section" id="tolerance">
+  <div class="strategy-header">
+    <div class="strat-icon-wrap">📊</div>
+    <div class="strategy-header-text">
+      <h2>Balance Tolerance &amp; Demands</h2>
+      <p class="tagline">Match your expectations to the day — not every day is the same nervous system</p>
+    </div>
+  </div>
+
+  <div class="strategy-body">
+
+    <div class="block why-block">
+      <div class="block-title">💡 Why This Works</div>
+      <p>Dr. Daniel Siegel's "Window of Tolerance" describes the zone of emotional regulation where a person can think, feel, and respond appropriately. Autistic children typically have a <strong>narrower window</strong> than their neurotypical peers — and that window shifts significantly day to day.</p>
+      <p>Sleep quality, sensory load from school, social stress, illness, hunger, and hormones all affect how much a child can handle on any given day. Pushing full expectations onto a child whose nervous system is already near its limit doesn't build resilience — it overflows the bucket and produces the very meltdowns you're trying to prevent.</p>
+      <p>Reading the daily state of your child's window and calibrating demands accordingly isn't "giving in" — it's intelligent, informed parenting based on how their nervous system actually works.</p>
+      <div class="research-note">Research by Autismunderstood.co.uk and Neurodivergent Insights confirms that autistic individuals often have a significantly narrower window of tolerance, and that co-regulation by a calm adult is the most effective way to expand it over time.</div>
+    </div>
+
+    <div class="block how-block">
+      <div class="block-title">🛠️ How to Do It</div>
+      <ol class="how-steps">
+        <li><span class="step-num">1</span><span>Keep a simple daily log: Morning (green/amber/red), After school (green/amber/red), Evening. After a few weeks, patterns emerge.</span></li>
+        <li><span class="step-num">2</span><span>Learn your child's <em>green signals</em> (flexible, chatty, can-do energy) vs <em>red signals</em> (stimming more, quieter, easily startled, snapping).</span></li>
+        <li><span class="step-num">3</span><span>On red days: minimal demands. Snack, quiet time, no homework battles, basic hygiene only. Let the nervous system recover first.</span></li>
+        <li><span class="step-num">4</span><span>On green days: introduce harder things. New routines, tricky conversations, skill practice.</span></li>
+        <li><span class="step-num">5</span><span>Share the system with school — ask them to flag hard days so you're forewarned before pickup.</span></li>
+      </ol>
+    </div>
+
+    <div class="block example-block">
+      <div class="block-title">📖 Real-Life Example</div>
+      <div class="example-child">👦 Theo, age 11</div>
+      <p>Theo comes home on a Monday afternoon — headphones in, not making eye contact, goes straight to his room. His parent has learned this is a red-level day. No demands are made for the first hour. Snack left outside his room. TV on in the background.</p>
+      <p>By 6pm, Theo appears and is chatty. Parent says: "I've been thinking — when you're feeling up to it, maybe 20 minutes of homework?" Theo says "yeah okay." It gets done. <strong>Reading the day and responding to it — rather than the clock — prevented a battle that would have taken all evening.</strong></p>
+    </div>
+
+    <div class="block watchout-block">
+      <div class="block-title">⚠️ Watch Out For</div>
+      <ul class="watchout-list">
+        <li>This is not rewarding bad behaviour — you're responding to nervous system state, not to a choice your child is making.</li>
+        <li>Don't confuse this with having no routine. Predictable structure is still important — it's the <em>demands within</em> the structure that flex.</li>
+        <li>It can be hard to balance this with siblings who have different needs. You don't need to apply the same rule to everyone — different children, different needs.</li>
+      </ul>
+    </div>
+
+    <div class="block resource-block">
+      <div class="block-title">📚 Further Reading</div>
+      <div class="resource-links">
+        <a href="https://autismunderstood.co.uk/health-and-wellbeing/window-of-tolerance/" target="_blank" rel="noopener">Autism Understood — Window of Tolerance explained</a>
+        <a href="https://neurodivergentinsights.com/window-of-tolerance/" target="_blank" rel="noopener">Neurodivergent Insights — Window of Tolerance in neurodivergent people</a>
+        <a href="https://aane.org/autism-info-faqs/library/restoring-the-autistic-nervous-system-a-gentle-path-to-regulation/" target="_blank" rel="noopener">AANE — Restoring the Autistic Nervous System</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- ═══════════════════════════════════════════════
+     STRATEGY 3 — INDIRECT PRAISE
+══════════════════════════════════════════════════ -->
+<section class="strategy-section" id="praise">
+  <div class="strategy-header">
+    <div class="strat-icon-wrap">🎯</div>
+    <div class="strategy-header-text">
+      <h2>Indirect Praise</h2>
+      <p class="tagline">Letting them overhear something wonderful — so it lands without pressure</p>
+    </div>
+  </div>
+
+  <div class="strategy-body">
+
+    <div class="block why-block">
+      <div class="block-title">💡 Why This Works</div>
+      <p>Direct praise — "You were AMAZING at that!" — can feel threatening to an autistic or PDA child for several reasons. It implies the adult was watching and judging. It raises the stakes ("can I do that again next time?"). It may feel disproportionate or confusing if the child has alexithymia (difficulty identifying their own emotions).</p>
+      <p>Indirect praise sidesteps all of this. "Accidentally" overhearing something good about yourself carries none of those complications. There's no demand to respond, no eye contact, no assessment. The child absorbs the information privately and emotionally — and it still counts.</p>
+      <p>Phil Christie and Elizabeth Newson, pioneers of PDA understanding, specifically identify indirect praise as more effective than direct praise for demand-avoidant children. The PDA Society's guidance echoes this strongly.</p>
+      <div class="research-note">PDA Society research and clinical guidance consistently recommends indirect communication of praise to reduce the demand aspect of being assessed — even a kind assessment can feel threatening.</div>
+    </div>
+
+    <div class="block how-block">
+      <div class="block-title">🛠️ How to Do It</div>
+      <ol class="how-steps">
+        <li><span class="step-num">1</span><span>Say something positive to another adult (or into a phone call, or to a pet) while your child is within earshot: <em>"I was just saying to Dad how quickly you figured that out earlier."</em></span></li>
+        <li><span class="step-num">2</span><span>Frame it as reporting fact, not evaluation: <em>"I noticed Kai sorted those cards in exactly the right order"</em> — not <em>"Kai is so clever!"</em></span></li>
+        <li><span class="step-num">3</span><span>Write praise in a note and leave it somewhere they'll find it — a lunchbox, pillow, or phone message. Written praise removes the confrontation of a face-to-face moment.</span></li>
+        <li><span class="step-num">4</span><span>Tell a favourite toy or character: <em>"Tell Bear about what you did today — I thought it was brilliant."</em> This creates gentle distance.</span></li>
+        <li><span class="step-num">5</span><span>Avoid superlatives and pressure words: "brilliant", "incredible", "perfect". Instead: "I noticed", "I liked that", "that worked really well".</span></li>
+      </ol>
+    </div>
+
+    <div class="block example-block">
+      <div class="block-title">📖 Real-Life Example</div>
+      <div class="example-child">👧 Mia, age 7</div>
+      <p>Mia draws a picture with real detail and care. Direct approach: <em>"Oh my goodness that is AMAZING, you are so talented!"</em> — Mia immediately looks anxious, crumples it up, says "it's rubbish."</p>
+      <p>Indirect approach: Mia is in the kitchen while her parent is on the phone to Grandma. Parent says casually: <em>"Oh Mia did this drawing earlier — there's all this tiny detail in the background, I keep looking at it."</em> Mia stands a little taller. She didn't have to respond, didn't have to perform, didn't have to face a direct assessment. <strong>The praise landed — without triggering the anxiety that direct praise would have brought.</strong></p>
+    </div>
+
+    <div class="block watchout-block">
+      <div class="block-title">⚠️ Watch Out For</div>
+      <ul class="watchout-list">
+        <li>Don't make it too theatrical or obviously staged — if it feels scripted, the child will see through it and it can backfire.</li>
+        <li>Not every child needs indirect praise. For some autistic children, direct warm praise is fine — this technique is specifically useful where direct praise causes withdrawal or anxiety.</li>
+        <li>Don't switch entirely to indirect and remove all warmth from your direct interactions. Tone still matters.</li>
+      </ul>
+    </div>
+
+    <div class="block resource-block">
+      <div class="block-title">📚 Further Reading</div>
+      <div class="resource-links">
+        <a href="https://www.pdasociety.org.uk/research-professional-practice/research-overviews/" target="_blank" rel="noopener">PDA Society — Research Overviews</a>
+        <a href="https://reframingautism.org.au/pathological-demand-avoidance-pda-and-autism-guide-for-allies/" target="_blank" rel="noopener">Reframing Autism — PDA Guide for Allies</a>
+        <a href="https://hes-extraordinary.com/parenting-strategies-for-pathological-demand-avoidance" target="_blank" rel="noopener">HES Extraordinary — 15 Effective PDA Parenting Strategies</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- ═══════════════════════════════════════════════
+     STRATEGY 4 — INDIRECT COMMANDS
+══════════════════════════════════════════════════ -->
+<section class="strategy-section" id="commands">
+  <div class="strategy-header">
+    <div class="strat-icon-wrap">🎮</div>
+    <div class="strategy-header-text">
+      <h2>Indirect Commands</h2>
+      <p class="tagline">Disguise the demand so the nervous system doesn't register it as a threat</p>
+    </div>
+  </div>
+
+  <div class="strategy-body">
+
+    <div class="block why-block">
+      <div class="block-title">💡 Why This Works</div>
+      <p>A direct command — "Put your shoes on" — is processed by a demand-avoidant child's nervous system as an immediate threat to their autonomy. Before reasoning even begins, the fight-or-flight response activates. Refusal isn't a choice at that point; it's a neurological response.</p>
+      <p>An indirect command — <em>"Bet I can get my coat on before you!"</em> — never triggers that system, because it arrives as a challenge, a game, a piece of curiosity. The demand is still present, but it's wearing a disguise. The child's nervous system hears "fun challenge" rather than "threat to autonomy."</p>
+      <p>This is the "Disguise demands" component of the PANDA framework (Pick battles, Anxiety management, Negotiate, <strong>Disguise demands</strong>, Adapt), developed to support children with demand avoidance. Research from Elizabeth Newson's original PDA work shows children "responded best to novelty, humour and flexibility."</p>
+      <div class="research-note">The PANDA approach (Manhattan Psychology Group, PDA Society) specifically identifies demand disguising through novelty, humour, and games as a core strategy — not manipulation, but nervous system-informed communication.</div>
+    </div>
+
+    <div class="block how-block">
+      <div class="block-title">🛠️ How to Do It</div>
+      <ol class="how-steps">
+        <li><span class="step-num">1</span><span><strong>Competition:</strong> <em>"Bet I can get my coat on before you!"</em> — race energy replaces demand energy.</span></li>
+        <li><span class="step-num">2</span><span><strong>Wondering:</strong> <em>"I wonder how quickly you could do that..."</em> — curiosity, not instruction.</span></li>
+        <li><span class="step-num">3</span><span><strong>Expertise:</strong> <em>"Can you show me how? You're way better at this than me."</em> — they're the teacher, not the one being directed.</span></li>
+        <li><span class="step-num">4</span><span><strong>Narrative/mission:</strong> <em>"The mission is: pyjamas on in under 3 minutes. I'll time you."</em></span></li>
+        <li><span class="step-num">5</span><span><strong>Humour:</strong> Do the task wrong yourself and wait for the correction. They <em>cannot</em> resist fixing it.</span></li>
+      </ol>
+    </div>
+
+    <div class="block example-block">
+      <div class="block-title">📖 Real-Life Example</div>
+      <div class="example-child">👦 Jake, age 10</div>
+      <p>Jake's room is a disaster zone and it needs sorting. Direct: "Tidy your room, please." Jake: "No. Later." Twenty minutes later: argument. Another twenty: meltdown. Nobody wins.</p>
+      <p>Indirect: Parent wanders in, starts picking up a pile, says: <em>"I give up, I can't sort this... I reckon this pile alone would take me at least 5 minutes."</em> Jake: <em>"It would not, watch."</em> He sorts it in two minutes. Parent: <em>"I cannot believe how quickly you did that."</em> Room improves significantly. <strong>The demand happened — but it never once felt like one.</strong></p>
+    </div>
+
+    <div class="block watchout-block">
+      <div class="block-title">⚠️ Watch Out For</div>
+      <ul class="watchout-list">
+        <li>Rotate your techniques — if you use the same approach every time, novelty wears off and it stops working.</li>
+        <li>If your child explicitly calls it out ("Are you trying to trick me?") — agree cheerfully. "Maybe! Did it work?" Honesty doesn't break the approach.</li>
+        <li>Don't use this when the child is already in a meltdown — it works on neutral ground, not crisis ground.</li>
+      </ul>
+    </div>
+
+    <div class="block resource-block">
+      <div class="block-title">📚 Further Reading</div>
+      <div class="resource-links">
+        <a href="https://manhattanpsychologygroup.com/MPG-blog/unveiling-the-panda-approach-tailored-strategies-for-nurturing-children-with-extreme-demand-av/" target="_blank" rel="noopener">Manhattan Psychology Group — The PANDA Approach explained</a>
+        <a href="https://www.pdasociety.org.uk/life-with-pda-menu/for-families-menu/everyday-life/" target="_blank" rel="noopener">PDA Society — Everyday life and demand disguising</a>
+        <a href="https://hes-extraordinary.com/pathological-demand-avoidance" target="_blank" rel="noopener">HES Extraordinary — Understanding PDA in depth</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- ═══════════════════════════════════════════════
+     STRATEGY 5 — PRETEND YOU DON'T KNOW
+══════════════════════════════════════════════════ -->
+<section class="strategy-section" id="pretend">
+  <div class="strategy-header">
+    <div class="strat-icon-wrap">🤷</div>
+    <div class="strategy-header-text">
+      <h2>Pretend You Don't Know</h2>
+      <p class="tagline">When they're the expert, the power dynamic shifts — and so does the resistance</p>
+    </div>
+  </div>
+
+  <div class="strategy-body">
+
+    <div class="block why-block">
+      <div class="block-title">💡 Why This Works</div>
+      <p>Role reversal is one of the most quietly powerful tools in the demand-avoidance toolkit. When you pretend not to know something your child knows well, you hand control entirely to them. They become the teacher, the helper, the person with the answers. The demand to <em>comply</em> disappears — replaced with an invitation to <em>lead</em>.</p>
+      <p>This aligns directly with the Collaborative and Proactive Solutions (CPS) model developed by Dr. Ross Greene — the idea that involving the child in the solution gives them ownership, and ownership reduces resistance. It also creates intrinsic motivation: <em>I want to help</em>, rather than <em>I have no choice but to obey</em>.</p>
+      <p>Sabotage (getting something deliberately wrong) taps into a child's natural instinct to correct errors — especially for perfectionistic or detail-focused autistic children, who often find incorrect information genuinely uncomfortable to leave alone.</p>
+      <div class="research-note">Dr. Ross Greene's CPS model (Collaborative and Proactive Solutions) is evidence-backed for reducing explosive behaviour through collaborative problem-solving and shared ownership — removing the authority-submission dynamic that triggers demand avoidance.</div>
+    </div>
+
+    <div class="block how-block">
+      <div class="block-title">🛠️ How to Do It</div>
+      <ol class="how-steps">
+        <li><span class="step-num">1</span><span>Ask for genuine help with something they can do independently: <em>"How do I log into this? I always forget."</em></span></li>
+        <li><span class="step-num">2</span><span>Make intentional mistakes and wait for the correction: misread a word in a book, put shoes on wrong feet, start a game wrong.</span></li>
+        <li><span class="step-num">3</span><span>Let them plan the solution: <em>"I've no idea how to sort this — you know more about it than me. What should we do first?"</em></span></li>
+        <li><span class="step-num">4</span><span>Use this in routines: <em>"I can never remember — is it teeth first or face wash first?"</em></span></li>
+        <li><span class="step-num">5</span><span>Sell the confusion convincingly — half-hearted pretending won't land. Commit to it.</span></li>
+      </ol>
+    </div>
+
+    <div class="block example-block">
+      <div class="block-title">📖 Real-Life Example</div>
+      <div class="example-child">👦 Sam, age 8</div>
+      <p>Every night, teeth brushing is a battle. Direct requests result in flat refusal. One evening, Sam's parent picks up their own toothbrush, looks confused, and begins attempting to "brush" their hair with it. Then a finger. Then an elbow.</p>
+      <p>Sam watches for about five seconds before he <em>cannot stand it</em>: <em>"That's not how you do it! You do it like THIS."</em> He demonstrates. Parent continues getting it slightly wrong. Sam takes over completely and they both end up brushing teeth. <strong>The task happened because Sam was in charge of it — not because he was told to do it.</strong></p>
+    </div>
+
+    <div class="block watchout-block">
+      <div class="block-title">⚠️ Watch Out For</div>
+      <ul class="watchout-list">
+        <li>Some children find this patronising if it's obvious — especially older or more perceptive children. Adjust your approach accordingly.</li>
+        <li>Works best on neutral or green days. If your child is already anxious or dysregulated, the playfulness may not land.</li>
+        <li>Don't use this for everything — it loses magic if it's the only tool in your kit.</li>
+      </ul>
+    </div>
+
+    <div class="block resource-block">
+      <div class="block-title">📚 Further Reading</div>
+      <div class="resource-links">
+        <a href="https://www.livesinthebalance.org/about-cps" target="_blank" rel="noopener">Lives in the Balance — Collaborative & Proactive Solutions (Dr. Ross Greene)</a>
+        <a href="https://www.pdasociety.org.uk/life-with-pda-menu/for-families-menu/everyday-life/" target="_blank" rel="noopener">PDA Society — Collaborative approaches in everyday life</a>
+        <a href="https://neurodivergentinsights.com/low-demand-parenting/" target="_blank" rel="noopener">Neurodivergent Insights — Low Demand Parenting</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- ═══════════════════════════════════════════════
+     STRATEGY 6 — OFFER LIMITED CHOICES
+══════════════════════════════════════════════════ -->
+<section class="strategy-section" id="choices">
+  <div class="strategy-header">
+    <div class="strat-icon-wrap">🔀</div>
+    <div class="strategy-header-text">
+      <h2>Offer Limited Choices</h2>
+      <p class="tagline">Give genuine control within safe limits — autonomy without chaos</p>
+    </div>
+  </div>
+
+  <div class="strategy-body">
+
+    <div class="block why-block">
+      <div class="block-title">💡 Why This Works</div>
+      <p>The core need driving demand avoidance is <strong>autonomy</strong> — not getting their own way, but feeling they have a genuine say in what happens to them. Two real choices satisfies that need without surrendering the outcome you actually need.</p>
+      <p>A 2024 study by Ryan and colleagues on autistic adults with intellectual disabilities confirmed that perceived choice significantly reduces anxiety responses. The key word is <em>perceived</em> — the feeling of control is often more important than actual control.</p>
+      <p>Critically, offering too many choices has the opposite effect — it creates decision fatigue and its own anxiety. Two options is the sweet spot: enough for agency, not so many as to overwhelm. For younger children or on high-anxiety days, visual choice cards (pictures rather than words) reduce the cognitive demand even further.</p>
+      <div class="research-note">Ryan et al. (2024) in the journal Autism found that autonomy support — including offering meaningful choices — significantly improved wellbeing and reduced challenging behaviour in autistic individuals. (journals.sagepub.com/doi/10.1177/13623613241254432)</div>
+    </div>
+
+    <div class="block how-block">
+      <div class="block-title">🛠️ How to Do It</div>
+      <ol class="how-steps">
+        <li><span class="step-num">1</span><span>Always offer exactly 2 real options — both genuinely acceptable to you: <em>"Pasta or rice tonight?"</em></span></li>
+        <li><span class="step-num">2</span><span>Use choices to create pace control: <em>"Do you want to start now or in 5 minutes?"</em> — either answer gets the task done.</span></li>
+        <li><span class="step-num">3</span><span>Use choices for routine: <em>"Shower before dinner or after?"</em> <em>"Shoes on first or bag packed first?"</em></span></li>
+        <li><span class="step-num">4</span><span>If they can't choose and freeze, offer a "third option" escape: <em>"Or is there something else that would work better for you?"</em></span></li>
+        <li><span class="step-num">5</span><span>For younger children: use visual choice boards — laminated pictures of two options they can physically point to or pick up.</span></li>
+      </ol>
+    </div>
+
+    <div class="block example-block">
+      <div class="block-title">📖 Real-Life Example</div>
+      <div class="example-child">👧 Freya, age 12</div>
+      <p>Homework is a nightly battle. Open-ended: <em>"When are you going to do your homework?"</em> — freezes, avoids, eventually refuses. Direct: <em>"Do your homework now."</em> — immediate resistance.</p>
+      <p>Limited choice: <em>"Do you want to do maths or English first?"</em> Freya thinks for a moment. <em>"English."</em> She opens her book. The choice gave her enough perceived control to begin — the homework still happens, but she decided how. <strong>Agency in the approach removed the threat of the demand itself.</strong></p>
+    </div>
+
+    <div class="block watchout-block">
+      <div class="block-title">⚠️ Watch Out For</div>
+      <ul class="watchout-list">
+        <li>Both choices must be genuine — if they choose the "wrong" one and you override it, you break trust and make future choices meaningless.</li>
+        <li>Don't offer choices when you're in a hurry and can only accept one outcome. If you can't honour both options, don't ask.</li>
+        <li>Avoid this when the child is mid-meltdown — decision-making is impossible when emotionally dysregulated. Choices work at calm baseline.</li>
+      </ul>
+    </div>
+
+    <div class="block resource-block">
+      <div class="block-title">📚 Further Reading</div>
+      <div class="resource-links">
+        <a href="https://autism.org/meltdowns-calming-techniques-in-autism/" target="_blank" rel="noopener">Autism Research Institute — Meltdowns &amp; calming techniques</a>
+        <a href="https://autismadvance.com/parenting-strategies-for-pda/" target="_blank" rel="noopener">Autism Advance — Low demand parenting for PDA</a>
+        <a href="https://neurodivergentinsights.com/low-demand-parenting/" target="_blank" rel="noopener">Neurodivergent Insights — Choices within low-demand parenting</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- ═══════════════════════════════════════════════
+     STRATEGY 7 — WHEN… THEN
+══════════════════════════════════════════════════ -->
+<section class="strategy-section" id="when-then">
+  <div class="strategy-header">
+    <div class="strat-icon-wrap">⏩</div>
+    <div class="strategy-header-text">
+      <h2>When… Then</h2>
+      <p class="tagline">It's not a threat — it's a map. And autistic brains love a map.</p>
+    </div>
+  </div>
+
+  <div class="strategy-body">
+
+    <div class="block why-block">
+      <div class="block-title">💡 Why This Works</div>
+      <p>There's an important difference between <strong>"If… then"</strong> (which sounds conditional and threatening: <em>"If you don't tidy up, then no screen time"</em>) and <strong>"When… then"</strong> (which is sequential and predictable: <em>"When we've tidied up, then it's screen time"</em>). Same outcome, completely different nervous system response.</p>
+      <p>"When" implies certainty — the first thing <em>will</em> happen, and the good thing <em>will</em> follow. There's no threat, no punishment framing, no negotiation. It's simply information about what comes next. Autistic children typically rely heavily on predictability to feel safe — knowing the sequence ahead of time removes uncertainty, which is a major source of anxiety.</p>
+      <p>For younger children, visual First-Then boards (a picture of the task, then a picture of the reward) make the sequence tangible and remove the need to process verbal language under stress. These are widely used in early autism support for good reason.</p>
+      <div class="research-note">Predictability and reduced uncertainty are robustly linked to reduced anxiety in autism across multiple research studies. The National Autistic Society's guidance on demand avoidance specifically recommends "when…then" framing over conditional or threatening language.</div>
+    </div>
+
+    <div class="block how-block">
+      <div class="block-title">🛠️ How to Do It</div>
+      <ol class="how-steps">
+        <li><span class="step-num">1</span><span>State it once, calmly, as fact: <em>"When you've had tea, then it's free time."</em> Don't repeat it — repetition signals anxiety and creates pressure.</span></li>
+        <li><span class="step-num">2</span><span>Keep the chain short: one When, one Then. Adding more ("And then after that, you'll also need to…") overwhelms.</span></li>
+        <li><span class="step-num">3</span><span>Make the "then" something they genuinely want — if the reward is vague or unappealing, the structure loses its pull.</span></li>
+        <li><span class="step-num">4</span><span>For younger children: use a visual First-Then board — pictures, not just words. This removes language processing demands.</span></li>
+        <li><span class="step-num">5</span><span>Follow through every single time. The power of When-Then is in its reliability. Break it once and trust erodes fast.</span></li>
+      </ol>
+    </div>
+
+    <div class="block example-block">
+      <div class="block-title">📖 Real-Life Example</div>
+      <div class="example-child">👦 Leo, age 9</div>
+      <p>Leo wants his iPad the moment he gets home from school. A battle used to erupt every afternoon. Now his parent meets him at the door with: <em>"When you've had a snack and shown me your reading book, then iPad."</em> Said once. Calmly. Not repeated.</p>
+      <p>Leo knows the map. He eats his snack, brings his reading book, and picks up his iPad within 15 minutes. No battle. No drama. <strong>The predictable structure gave his brain exactly what it needed to cooperate — a clear, reliable path to the thing he wanted.</strong></p>
+    </div>
+
+    <div class="block watchout-block">
+      <div class="block-title">⚠️ Watch Out For</div>
+      <ul class="watchout-list">
+        <li>Never extend the chain mid-session: <em>"...but also before that, you need to…"</em> This breaks trust and the whole structure collapses.</li>
+        <li>If the "then" doesn't happen reliably (you forget, something comes up), the system stops working. Consistency is non-negotiable here.</li>
+        <li>Watch your wording: "If you don't do X, then Y won't happen" is a threat, not a When-Then. Threats trigger avoidance. Keep it positive and sequential.</li>
+      </ul>
+    </div>
+
+    <div class="block resource-block">
+      <div class="block-title">📚 Further Reading</div>
+      <div class="resource-links">
+        <a href="https://www.autism.org.uk/advice-and-guidance/behaviour/demand-avoidance" target="_blank" rel="noopener">National Autistic Society — Demand avoidance guidance</a>
+        <a href="https://aidecanada.ca/resources/learn/asd-id-core-knowledge/demand-avoidance-what-it-is-and-some-strategies-for-moving-forward" target="_blank" rel="noopener">AIDE Canada — Demand avoidance strategies</a>
+        <a href="https://www.autism.org.uk/advice-and-guidance/topics/communication/strategies/structure-and-visual-supports" target="_blank" rel="noopener">National Autistic Society — Visual supports &amp; First-Then boards</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- ═══════════════════════════════════════════════
+     STRATEGY 8 — FRESH START EVERY DAY
+══════════════════════════════════════════════════ -->
+<section class="strategy-section" id="fresh-start">
+  <div class="strategy-header">
+    <div class="strat-icon-wrap">🌅</div>
+    <div class="strategy-header-text">
+      <h2>Fresh Start Every Day</h2>
+      <p class="tagline">Yesterday's storm doesn't have to be today's forecast — for either of you</p>
+    </div>
+  </div>
+
+  <div class="strategy-body">
+
+    <div class="block why-block">
+      <div class="block-title">💡 Why This Works</div>
+      <p>Emotional memory in autistic individuals is often intense and long-lasting. The nervous system does not easily "reset" after a significant meltdown — both child and parent carry the residue. When the next morning begins with unresolved tension, the anxiety baseline is already elevated before the day has even started.</p>
+      <p>Carrying yesterday's events into today is experienced by demand-avoidant children as another layer of demand — "now I also have to deal with the emotional weight of yesterday." It adds directly to the anxiety bucket from the moment they wake up.</p>
+      <p>The Low Arousal Approach (developed by Andy McDonnell at Studio III) specifically identifies "not using past behaviour in current management" as a key principle. The research basis is co-regulation: a calm, warm, fresh-start adult helps reset the child's nervous system. A tense, watchful, still-cross adult prolongs dysregulation.</p>
+      <p>A fresh start is also a powerful model of something your child needs to be able to do themselves — let things go, move forward, not be defined by their worst moments.</p>
+      <div class="research-note">The Low Arousal Approach (Studio III / Andy McDonnell) has an established evidence base in reducing restrictive practice and supporting emotional dysregulation in autism and learning disabilities. Central to it is the principle that caregiver arousal directly affects the regulated state of the person they support.</div>
+    </div>
+
+    <div class="block how-block">
+      <div class="block-title">🛠️ How to Do It</div>
+      <ol class="how-steps">
+        <li><span class="step-num">1</span><span>A simple morning ritual: warm greeting, favourite breakfast, ordinary conversation — as if yesterday didn't happen.</span></li>
+        <li><span class="step-num">2</span><span>Don't reference the meltdown at morning — let it go until both of you are calm, regulated, and genuinely ready (often hours or days later).</span></li>
+        <li><span class="step-num">3</span><span>If something does need addressing for safety reasons, choose a specific calm time — not first thing, not near bedtime.</span></li>
+        <li><span class="step-num">4</span><span>Model it out loud if it helps: <em>"New day, fresh start. Whatever happened is done."</em></span></li>
+        <li><span class="step-num">5</span><span>Make it mutual — your child also gets to let things go about <em>you</em>. It's a two-way reset, not just compliance.</span></li>
+      </ol>
+    </div>
+
+    <div class="block example-block">
+      <div class="block-title">📖 Real-Life Example</div>
+      <div class="example-child">Parent &amp; Child, Monday/Tuesday</div>
+      <p>Monday was really hard. Things were said. A meltdown happened at dinner and went on for an hour. Everyone went to bed stressed and exhausted.</p>
+      <p>Tuesday morning: parent makes their child's favourite cereal without being asked. Puts it on the table. Says <em>"Morning"</em> like it's any other day. No reference to Monday. No loaded looks. No <em>"I hope today is better"</em> (which implies yesterday was bad — they already know). Child sits down. Eats breakfast. Shoulders drop. <strong>The fresh start wasn't permission — it was a gift. It said: "I love you more than I'm angry at what happened."</strong></p>
+    </div>
+
+    <div class="block watchout-block">
+      <div class="block-title">⚠️ Watch Out For</div>
+      <ul class="watchout-list">
+        <li>Fresh start doesn't mean avoiding every necessary conversation — it means timing them correctly. Safety issues still need addressing, just not first thing.</li>
+        <li>This is genuinely hard when you're exhausted, hurt, or still processing what happened. Self-compassion applies here. You're allowed to need a fresh start too.</li>
+        <li>Avoid <em>"I hope today is better"</em> — it carries the weight of yesterday into today implicitly. Try neutral warmth instead.</li>
+      </ul>
+    </div>
+
+    <div class="block resource-block">
+      <div class="block-title">📚 Further Reading</div>
+      <div class="resource-links">
+        <a href="https://www.lowarousal.com/" target="_blank" rel="noopener">Low Arousal Approach — Andy McDonnell / Studio III (official site)</a>
+        <a href="https://autismawarenesscentre.com/what-is-the-low-arousal-approach-and-how-can-it-benefit-my-family/" target="_blank" rel="noopener">Autism Awareness Centre — Low Arousal Approach for families</a>
+        <a href="https://sparkforautism.org/discover_article/managing-emotions/" target="_blank" rel="noopener">SPARK for Autism — Autism, meltdowns &amp; managing emotions</a>
+        <a href="https://www.healisautism.com/post/manage-meltdowns-gently-low-arousal-approach" target="_blank" rel="noopener">Healis Autism — Manage meltdowns gently with Low Arousal</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  Based on content from the ASD Support Pack &nbsp;•&nbsp; Sources include: PDA Society, National Autistic Society, Studio III (Low Arousal Approach), Autism Research Institute, Neurodivergent Insights, SPARK for Autism &nbsp;•&nbsp;
+  <a href="09-managing-meltdowns.html">← Back to Managing Meltdowns</a> &nbsp;•&nbsp;
+  <a href="index.html">🏠 Home</a>
+</footer>
+
+<script>
+  // Scroll-based active nav highlighting
+  const sections = ['battles','tolerance','praise','commands','pretend','choices','when-then','fresh-start'];
+  const links = document.querySelectorAll('.strat-nav a');
+
+  function updateNav() {
+    let active = sections[0];
+    sections.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && el.getBoundingClientRect().top < 160) active = id;
+    });
+    links.forEach(l => {
+      l.classList.toggle('active', l.getAttribute('href') === '#' + active);
+    });
+  }
+
+  window.addEventListener('scroll', updateNav, { passive: true });
+  updateNav();
+</script>
+</body>
+</html>
