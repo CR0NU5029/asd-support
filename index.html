@@ -238,9 +238,70 @@
     }
     footer a { color: #9B7EBD; text-decoration: none; }
     footer a:hover { text-decoration: underline; }
+
+    /* TOP NAV + BURGER */
+    .top-nav {
+      position: sticky; top: 0; z-index: 1100;
+      background: rgba(253,246,238,0.97);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      border-bottom: 2px solid rgba(155,126,189,0.15);
+      padding: 10px 20px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .nav-title { font-size: 14px; font-weight: 700; color: var(--subtext); }
+    .burger-btn {
+      background: white; border: 2px solid #E0D8E8; border-radius: 10px;
+      width: 38px; height: 38px; display: flex; align-items: center; justify-content: center;
+      font-size: 16px; cursor: pointer; transition: all 0.2s;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06); flex-shrink: 0; padding: 0; font-family: inherit;
+    }
+    .burger-btn:hover { background: #F4EEFB; border-color: #C4A8E8; }
+    .burger-overlay { display: none; position: fixed; inset: 0; z-index: 1900; }
+    .burger-overlay.open { display: block; }
+    .burger-menu {
+      position: fixed; top: 54px; left: 0; width: 272px;
+      background: white; border-bottom-right-radius: 16px;
+      box-shadow: 6px 6px 24px rgba(0,0,0,0.14);
+      z-index: 2000; overflow: hidden; display: none;
+    }
+    .burger-menu.open { display: block; animation: menuSlide 0.2s ease; }
+    @keyframes menuSlide { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
+    .burger-menu-header {
+      background: linear-gradient(135deg, #9B7EBD, #E8875A, #F5CE5A);
+      color: white; padding: 14px 18px; font-size: 12px; font-weight: 900;
+      letter-spacing: 0.08em; text-transform: uppercase;
+    }
+    .burger-menu a {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 18px; font-size: 14px; font-weight: 700;
+      color: var(--text); text-decoration: none;
+      border-bottom: 1px solid rgba(0,0,0,0.05); transition: background 0.15s;
+    }
+    .burger-menu a:hover { background: #F4EEFB; }
+    .burger-menu a:last-child { border-bottom: none; }
+    .burger-menu a.menu-sub { padding-left: 34px; font-size: 13px; color: var(--subtext); }
+    .burger-menu a.menu-sub:hover { background: #EAF7F5; color: #3A8A80; }
+    .burger-menu a.menu-current { background: #F4EEFB; color: #9B7EBD; font-weight: 900; pointer-events: none; cursor: default; }
   </style>
 </head>
 <body>
+
+<nav class="top-nav">
+  <button class="burger-btn" onclick="toggleMenu()" aria-label="All guides">☰</button>
+  <span class="nav-title">ASD Support Pack — Interactive Guides</span>
+</nav>
+
+<div class="burger-overlay" id="burgerOverlay" onclick="closeMenu()"></div>
+<div class="burger-menu" id="burgerMenu">
+  <div class="burger-menu-header">📚 All Guides</div>
+  <a href="index.html" class="menu-current">🏠 Home</a>
+  <a href="03-understanding-the-spectrum.html" onclick="closeMenu()">🌈 Understanding the Spectrum</a>
+  <a href="07-sensory-explorer.html" onclick="closeMenu()">👂 Sensory Explorer</a>
+  <a href="08-understanding-behaviour.html" onclick="closeMenu()">🧠 Understanding &amp; Managing Behaviour</a>
+  <a href="08b-strategy-toolkit.html" class="menu-sub" onclick="closeMenu()">🛠️ Strategy Toolkit</a>
+  <a href="09-managing-meltdowns.html" onclick="closeMenu()">🌊 Managing Meltdowns</a>
+  <a href="09b-home-strategies.html" class="menu-sub" onclick="closeMenu()">🏡 Home Strategies</a>
+</div>
 
 <!-- HERO -->
 <div class="hero">
@@ -379,5 +440,15 @@
   <p style="margin-top:6px;">Based on materials from the NHS Mid Cheshire Hospitals Foundation Trust, the National Autistic Society, Autism Education Trust &amp; The Cygnet Parenting Programme</p>
 </footer>
 
+<script>
+  function toggleMenu() {
+    document.getElementById('burgerMenu').classList.toggle('open');
+    document.getElementById('burgerOverlay').classList.toggle('open');
+  }
+  function closeMenu() {
+    document.getElementById('burgerMenu').classList.remove('open');
+    document.getElementById('burgerOverlay').classList.remove('open');
+  }
+</script>
 </body>
 </html>
